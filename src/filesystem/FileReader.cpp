@@ -15,8 +15,8 @@ namespace data {
      *
      * @return std::vector<std::string> Ids in the order they were read
      */
-    std::vector<std::string> FileReader::getAllIds() const {
-        return orderedIds;
+    std::vector<std::string> FileReader::getAllInitialOptions() const {
+        return orderedOptions;
     }
 
     std::vector<std::string> FileReader::getDataById(const std::string& id) const {
@@ -34,7 +34,7 @@ namespace data {
             std::vector<std::string> tokens = splitLine(line);
             if (tokens.size() >= 2) {
                 std::string id = tokens[1]; // Assuming ID is the second element
-                orderedIds.push_back(id);
+                orderedOptions.push_back(id);
                 idToDataMap[id] = tokens;
             }
         }
@@ -78,14 +78,12 @@ namespace data {
                 inBrackets = true;
             } else if (ch == ']') {
                 inBrackets = false;
-            } else if (ch == '(') {
-                inParentheses = true; // Set flag when entering parentheses
-                // Do not add '(' to token
-                continue; // Skip the current iteration to avoid adding '(' to the token
-            } else if (ch == ')' && inParentheses) {
-                inParentheses = false; // Reset flag when leaving parentheses
-                // Do not add ')' to token, and continue to prevent breaking the token here
-                continue; // Skip the current iteration to avoid adding ')' to the token
+            } else if (ch == '(' && !inBrackets) { // Only recognize '(' as special if not in brackets
+                inParentheses = true;
+                continue; // Skip adding '(' to token
+            } else if (ch == ')' && inParentheses && !inBrackets) { // Ensure we're in parentheses but not in brackets
+                inParentheses = false;
+                continue; // Skip adding ')' to token
             }
 
             if (ch == ',' && !inBrackets && !inParentheses) {
@@ -103,6 +101,7 @@ namespace data {
 
         return tokens;
     }
+
     void FileReader::trimSquareBrackets(std::string& str) {
         if (!str.empty()) {
             // Check and remove leading '[' if present

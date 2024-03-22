@@ -10,14 +10,14 @@ namespace filesystem {
         }
     }
 
-// Destructor that closes the file
+    // Destructor that closes the file
     FileWriter::~FileWriter() {
         if (outputFile.is_open()) {
             outputFile.close();
         }
     }
 
-// Method to write a single line to the file
+    // Method to write a single line to the file
     void FileWriter::writeLine(const std::string& line) {
         if (outputFile.is_open()) {
             outputFile << line << std::endl;

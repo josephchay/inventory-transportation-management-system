@@ -8,11 +8,11 @@ namespace blockchain {
         int transactionId;
         std::string retailerPerTripCreditBalance;
         std::string annualOrderingCreditBalance;
-        int paymentType; // options will be given to the user to select.
-        int productOrderingLimit; // options will be given to the user to select.
+        std::string paymentType;
+        std::string productOrderingLimit;
 
         TransactionInfo() = default;
-        TransactionInfo(const int& id, const std::string& retailerPerTripCreditBalance, const std::string& annualOrderingCreditBalance, int& paymentType, const int& productOrderingLimit)
+        TransactionInfo(const int& id, const std::string& retailerPerTripCreditBalance, const std::string& annualOrderingCreditBalance, std::string& paymentType, const std::string& productOrderingLimit)
                 : transactionId(id), retailerPerTripCreditBalance(retailerPerTripCreditBalance), annualOrderingCreditBalance(annualOrderingCreditBalance), paymentType(paymentType), productOrderingLimit(productOrderingLimit) {}
     };
 

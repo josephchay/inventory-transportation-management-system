@@ -1,0 +1,7 @@
+Block Type: Supplier
+Block Number: 0
+Current Hash: zrdExHKxf08taF1Tab0D5SR5WnToa38Y5eRjJr7GY9M83xrt6Sp933RQnJ5b
+Previous Hash: zrdExHKxf08taF1Tab0D5SR5WnToa38Y5eRjJr7GY9M83xrt6Sp933RQnJ5b
+Timestamp: 2024-03-23 02:02:35
+Information: Id: 32141 | Name: The Local Supply Depot | Location: Jalan SS15/4G, Subang Jaya, Selangor | Branch: Subang Jaya
+

@@ -6,17 +6,18 @@ namespace collection::validation {
     /**
      * @brief Get a string input from the user and provides error handling for empty inputs.
      *
-     * @param prompt
+     * @param topic
      * @return
      */
-    std::string InputValidator::validateString(const std::string& prompt) {
+    std::string InputValidator::validateString(const std::string& topic) {
         std::string input;
         while (true) {
-            std::cout << prompt;
+            std::cout << "Enter " << topic << ": ";
             std::getline(std::cin, input);
             if (input.empty()) {
                 std::cout << "Input cannot be empty. Please try again.\n";
             } else {
+                std::cout << "Entered " << topic << ": " << input << std::endl << std::endl;
                 return input; // Return the valid, non-empty input
             }
         }
@@ -25,14 +26,14 @@ namespace collection::validation {
     /**
      * @brief Check if the input is an integer and provides error handling for invalid inputs other than integer values.
      *
-     * @param prompt
+     * @param topic
      * @return
      */
-    int InputValidator::validateInt(const std::string& prompt) {
+    int InputValidator::validateInt(const std::string& topic) {
         int value;
         std::string input;
         while (true) {
-            std::cout << prompt;
+            std::cout << "Enter " << topic << ": ";
             std::getline(std::cin, input);
             if (input.empty()) {
                 std::cout << "Input cannot be empty. Please try again.\n";
@@ -42,6 +43,7 @@ namespace collection::validation {
             if (!(inputStream >> value) || !(inputStream.eof())) { // Checks for exact match and no extra characters
                 std::cout << "Invalid input. Please enter an integer.\n";
             } else {
+                std::cout << "Entered " << topic << ": " << value << std::endl << std::endl;
                 return value;
             }
         }
@@ -55,14 +57,14 @@ namespace collection::validation {
      * clears the error state of cin, discards the invalid input, and prompts the user again.
      * This process repeats until a valid double is entered.
      *
-     * @param prompt The custom message displayed to the user prompting for input.
+     * @param topic The custom message displayed to the user prompting for input.
      * @return A valid double value entered by the user.
      */
-    double InputValidator::validateDouble(const std::string& prompt) {
+    double InputValidator::validateDouble(const std::string& topic) {
         double value;
         std::string input;
         while (true) {
-            std::cout << prompt;
+            std::cout << "Enter " << topic << ": ";
             std::getline(std::cin, input);
             if (input.empty()) {
                 std::cout << "Input cannot be empty. Please try again.\n";
@@ -72,6 +74,7 @@ namespace collection::validation {
             if (!(inputStream >> value) || !(inputStream.eof())) { // Checks for exact match and no extra characters
                 std::cout << "Invalid input. Please enter a valid number.\n";
             } else {
+                std::cout << "Entered " << topic << ": " << value << std::endl << std::endl;
                 return value;
             }
         }
@@ -85,14 +88,14 @@ namespace collection::validation {
      * a regular expression. If the input does not match, it prompts the user again.
      * This process repeats until a valid date format is entered.
      *
-     * @param prompt The custom message displayed to the user prompting for input.
+     * @param topic The custom message displayed to the user prompting for input.
      * @return A valid date string in the format dd/mm/yyyy.
      */
-    std::string InputValidator::validateDateString(const std::string& prompt) {
+    std::string InputValidator::validateDateString(const std::string& topic) {
         std::regex datePattern(R"(^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])/\d{4}$)");
         std::string input;
         while (true) {
-            std::cout << prompt;
+            std::cout << "Enter " << topic << ": ";
             std::getline(std::cin, input);
             if (input.empty()) {
                 std::cout << "Input cannot be empty. Please try again.\n";
@@ -112,15 +115,15 @@ namespace collection::validation {
      * spacing and case sensitivity) using a regular expression. If the input does not match,
      * it prompts the user again. This process repeats until a valid time format is entered.
      *
-     * @param prompt The custom message displayed to the user prompting for input.
+     * @param topic The custom message displayed to the user prompting for input.
      * @return A valid time string in the format hh:mm AM/PM.
      */
-    std::string InputValidator::validateTimeString(const std::string& prompt) {
-        validateString(prompt);
+    std::string InputValidator::validateTimeString(const std::string& topic) {
+        validateString(topic);
         std::regex timePattern(R"(^(1[0-2]|0?[1-9]):([0-5]?[0-9]) ?([AaPp][Mm])$)");
         std::string input;
         while (true) {
-            std::cout << prompt;
+            std::cout << "Enter " << topic << ": ";
             std::getline(std::cin, input);
             if (input.empty()) {
                 std::cout << "Input cannot be empty. Please try again.\n";
@@ -142,14 +145,14 @@ namespace collection::validation {
      * and ensures that if a decimal point is present, it is followed by no more than
      * two digits.
      *
-     * @param prompt The message displayed to the user prompting for input.
+     * @param topic The message displayed to the user prompting for input.
      * @return A string representing a valid numeric productOrderingLimit value.
      */
-    std::string InputValidator::validateCurrencyInput(const std::string& prompt) {
+    std::string InputValidator::validateCurrencyInput(const std::string& topic) {
         std::regex currencyPattern(R"(^[0-9]+(\.[0-9]{1,2})?$)");
         std::string input;
         do {
-            std::cout << prompt;
+            std::cout << "Enter " << topic << ": ";
             std::getline(std::cin, input);
             if (input.empty()) {
                 std::cout << "Input cannot be empty. Please try again.\n";
@@ -163,7 +166,7 @@ namespace collection::validation {
         return input;
     }
 
-    std::string InputValidator::validateSelection(const std::string& prompt, const std::vector<std::string>& options) {
+    std::string InputValidator::validateSelection(const std::string& topic, const std::vector<std::string>& options) {
         std::string selectedOption;
         while (true) {
             // Display options
@@ -172,7 +175,7 @@ namespace collection::validation {
             }
 
             // Get user's choice
-            std::cout << prompt;
+            std::cout << "Select " << topic << ": ";
             int choice;
             std::cin >> choice;
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear the input buffer
@@ -185,22 +188,24 @@ namespace collection::validation {
             }
 
             selectedOption = options[choice - 1];
+            std::cout << "Selected " << topic << ": " << selectedOption << std::endl << std::endl;
             break; // Valid selection, exit loop
         }
 
         return selectedOption;
     }
 
-    bool InputValidator::confirmValue(const std::string& prompt, const std::string& value) {
+    bool InputValidator::confirmValue(const std::string& topic, const std::string& value) {
         std::string input;
         // Loop until a valid response is received
         while (true) {
-            std::cout << prompt << value << "\nConfirm? (y/n): ";
+            std::cout << "Confirm " << topic << ": " << value << "\nConfirm? (y/n): ";
             std::cin >> input;
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear the newline character
 
             // Check for valid input
             if (input == "y" || input == "Y") {
+                std::cout << "Confirmed " << topic << ": " << value << std::endl << std::endl;
                 return true;
             } else if (input == "n" || input == "N") {
                 return false;

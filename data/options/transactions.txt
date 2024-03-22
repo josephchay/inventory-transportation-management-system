@@ -1,6 +1,6 @@
-1,Auto-deduction
-2,iPay88
-3,PayPal
-4,Credit Card
-5,Online Banking
-6,Cash
+1,Auto-deduction,[weight (kg),volume (litres),count (number), area (sqft), value (RM)]
+2,iPay88,[weight (kg),volume (litres),count (number), area (sqft), value (RM)]
+3,PayPal,[weight (kg),volume (litres),count (number), area (sqft), value (RM)]
+4,Credit Card,[weight (kg),volume (litres),count (number), area (sqft)]
+5,Online Banking,[weight (kg),volume (litres),count (number), area (sqft)]
+6,Cash,[weight (kg),count (number), value (RM)]

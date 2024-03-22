@@ -16,9 +16,18 @@ namespace blockchain {
         [[nodiscard]] std::string getPreviousBlockHash() const;
         [[nodiscard]] std::string getTimestamp() const;
         [[nodiscard]] std::string getInformationString() const;
+        bool isGenesis() const;
+
+        void setGenesis(bool genesisValue);
 
     protected:
         std::string blockType;
+        int blockNumber;
+        std::string currentBlockHash;
+        std::string previousBlockHash;
+        std::string timestamp;
+        std::string informationString;
+        bool genesis = false;
 
         Block(int blockNumber, const std::string& previousBlockHash, const std::string& information, const std::string& blockType);
 
@@ -36,13 +45,5 @@ namespace blockchain {
          * std::string myHash = generateRandomHash(20); // Generates a random hash string of 20 characters.
          */
         std::string generateRandomHash(size_t hashLength = 20) const;
-
-    private:
-        int blockNumber;
-        std::string currentBlockHash;
-        std::string previousBlockHash;
-        std::string timestamp;
-        std::string informationString;
-        Block* nextBlock;
     };
 } // namespace blockchain

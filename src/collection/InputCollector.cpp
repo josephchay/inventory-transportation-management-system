@@ -6,68 +6,73 @@
 
 namespace collection {
     blockchain::SupplierInfo Prompt::collectSupplierInfo(const std::string& optionsFilePath) {
+        std::string id, name, location, branch;
+
         data::FileReader reader(optionsFilePath);
 
-        auto allIds = reader.getAllIds();
-        std::string selectedId = validation::InputValidator::validateSelection("Select supplier ID: ", allIds);
+        auto allIds = reader.getAllInitialOptions();
+        id = validation::InputValidator::validateSelection("supplier ID", allIds);
 
-        auto selectedData = reader.getDataById(selectedId);
+        auto selectedData = reader.getDataById(id);
 
-        std::string supplierName = selectedData[2];
-        supplierName = validation::InputValidator::confirmValue("Confirm supplier name: ", supplierName) ? supplierName : "";
+        name = selectedData[2];
+        name = validation::InputValidator::confirmValue("supplier name", name) ? name : "";
 
-        std::string supplierLocation = selectedData[3];
-        supplierLocation = validation::InputValidator::confirmValue("Confirm supplier location: ", supplierLocation) ? supplierLocation : "";
+        location = selectedData[3];
+        location = validation::InputValidator::confirmValue("supplier location", location) ? location : "";
 
-        std::string supplierBranch = selectedData[4];
-        supplierBranch = validation::InputValidator::confirmValue("Confirm supplier branch: ", supplierBranch) ? supplierBranch : "";
+        branch = selectedData[4];
+        branch = validation::InputValidator::confirmValue("supplier branch", branch) ? branch : "";
 
-        return blockchain::SupplierInfo(std::stoi(selectedId), supplierName, supplierLocation, supplierBranch);
+        return blockchain::SupplierInfo(std::stoi(id), name, location, branch);
     }
 
     blockchain::TransporterInfo Prompt::collectTransporterInfo(const std::string& optionsFilePath) {
+        std::string id, name, productType, transportationType, orderingType;
+
         data::FileReader reader(optionsFilePath);
 
         // Fetch all transporter IDs for selection
-        auto allIds = reader.getAllIds();
-        std::string selectedId = validation::InputValidator::validateSelection("Select transporter ID: ", allIds);
+        auto allIds = reader.getAllInitialOptions();
+        id = validation::InputValidator::validateSelection("transporter ID", allIds);
 
-        auto selectedData = reader.getDataById(selectedId);
+        auto selectedData = reader.getDataById(id);
 
-        std::string transporterName = selectedData[2];
-        transporterName = validation::InputValidator::confirmValue("Confirm transporter name: ", transporterName) ? transporterName : "";
+        name = selectedData[2];
+        name = validation::InputValidator::confirmValue("transporter name", name) ? name : "";
 
         auto productTypeOptions = data::FileReader::parseBracketOptions(selectedData[3]);
-        std::string productType = collection::validation::InputValidator::validateSelection("Select transporter product type: ", productTypeOptions);
+        productType = collection::validation::InputValidator::validateSelection("transporter product type", productTypeOptions);
 
         auto transportationTypeOptions = data::FileReader::parseBracketOptions(selectedData[4]);
-        std::string transportationType = collection::validation::InputValidator::validateSelection("Select transporter transportation type: ", transportationTypeOptions);
+        transportationType = collection::validation::InputValidator::validateSelection("transporter transportation type", transportationTypeOptions);
 
         auto orderingTypeOptions = data::FileReader::parseBracketOptions(selectedData[5]);
-        std::string orderingType = collection::validation::InputValidator::validateSelection("Select transporter ordering type: ", orderingTypeOptions);
+        orderingType = collection::validation::InputValidator::validateSelection("transporter ordering type", orderingTypeOptions);
 
-        double orderingAmount = validation::InputValidator::validateDouble("Enter transporter ordering payment type (kg): ");
+        double orderingAmount = validation::InputValidator::validateDouble("transporter ordering payment type (kg)");
 
-        return blockchain::TransporterInfo(std::stoi(selectedId), transporterName, productType, transportationType, orderingType, orderingAmount);
+        return blockchain::TransporterInfo(std::stoi(id), name, productType, transportationType, orderingType, orderingAmount);
     }
 
     blockchain::TransactionInfo Prompt::collectTransactionInfo(const std::string& optionsFilePath) {
-        int transactionID, paymentType, productOrderingLimit;
-        std::string retailerPerTripCreditBalance, annualOrderingCreditBalance;
-
-        transactionID = collection::validation::InputValidator::validateInt("Enter transaction ID: ");
-        retailerPerTripCreditBalance = collection::validation::InputValidator::validateString("Enter retailer per trip credit balance: ");
-        annualOrderingCreditBalance = collection::validation::InputValidator::validateString("Enter annual ordering credit balance: ");
-        paymentType = collection::validation::InputValidator::validateInt("Enter payment type: ");
-        productOrderingLimit = collection::validation::InputValidator::validateInt("Enter product ordering limit: ");
+        int id;
+        std::string retailerPerTripCreditBalance, annualOrderingCreditBalance, paymentType, productOrderingLimit;
 
         data::FileReader reader(optionsFilePath);
 
-        auto allIds = reader.getAllIds();
-        std::string selectedId = validation::InputValidator::validateSelection("Select transaction ID: ", allIds);
+        auto allPaymentTypes = reader.getAllInitialOptions();
 
-        auto selectedData = reader.getDataById(selectedId);
+        id = collection::validation::InputValidator::validateInt("transaction ID (unique)");
+        retailerPerTripCreditBalance = collection::validation::InputValidator::validateString("retailer per trip credit balance (RM)");
+        annualOrderingCreditBalance = collection::validation::InputValidator::validateString("annual ordering credit balance (RM)");
+        paymentType = validation::InputValidator::validateSelection("supplier ID", allPaymentTypes);
 
-        return blockchain::TransactionInfo(transactionID, retailerPerTripCreditBalance, annualOrderingCreditBalance, paymentType, productOrderingLimit);
+        auto selectedData = reader.getDataById(paymentType);
+
+        auto productOrderingLimitOptions = data::FileReader::parseBracketOptions(selectedData[2]);
+        productOrderingLimit = collection::validation::InputValidator::validateSelection("product ordering limit", productOrderingLimitOptions);
+
+        return blockchain::TransactionInfo(id, retailerPerTripCreditBalance, annualOrderingCreditBalance, paymentType, productOrderingLimit);
     }
 } // namespace collection

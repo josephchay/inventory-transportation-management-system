@@ -12,12 +12,12 @@ namespace data {
         explicit FileReader(const std::string& filePath);
 
         void parseFile(const std::string& filePath);
-        std::vector<std::string> getAllIds() const;
+        std::vector<std::string> getAllInitialOptions() const;
         std::vector<std::string> getDataById(const std::string& id) const;
         static std::vector<std::string> parseBracketOptions(const std::string& bracketedString);
 
     private:
-        std::vector<std::string> orderedIds;
+        std::vector<std::string> orderedOptions;
         std::map<std::string, std::vector<std::string>> idToDataMap;
 
         static void trim(std::string& s);

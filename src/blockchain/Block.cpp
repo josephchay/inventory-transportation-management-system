@@ -43,12 +43,16 @@ namespace blockchain {
         return oss.str();
     }
 
-    // Getter methods
+    void Block::setGenesis(bool genesisValue) {
+        genesis = genesisValue;
+    }
 
+    // Getter methods
     std::string Block::getBlockType() const { return blockType; }
     int Block::getBlockNumber() const { return blockNumber; }
     std::string Block::getCurrentBlockHash() const { return currentBlockHash; }
     std::string Block::getPreviousBlockHash() const { return previousBlockHash; }
     std::string Block::getTimestamp() const { return timestamp; }
     std::string Block::getInformationString() const { return informationString; }
+    bool Block::isGenesis() const { return genesis; }
 } // namespace blockchain
