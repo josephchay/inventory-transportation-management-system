@@ -1,0 +1,6 @@
+1,Auto-deduction
+2,iPay88
+3,PayPal
+4,Credit Card
+5,Online Banking
+6,Cash

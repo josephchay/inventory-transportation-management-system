@@ -1,0 +1,3 @@
+1,51832,Quick Express Transportation,[Poly mailer,Padded poly mailer,Box],[Local Trucking,LTL (Less Than Truckload) Shipping,FTL (Full Truckload) Shipping],[subscription-based orders,non-seasonal daily orders,bulk orders,customized orders]
+2,47813,UrbanWheels Transport Solutions,[Bubble mailer,Corrugated Box,Stretch Wrap Film],[Local Trucking,LTL (Less Than Truckload) Shipping,FTL (Full Truckload) Shipping],[one-time orders,daily orders,non-seasonal daily orders,bulk orders,customized orders]
+3,62945,SpeedyShip Logistics Services,[Tyvek Envelope,Cardboard Box,Shrink Wrap],[Local Delivery,Regional Delivery,National Delivery],[regular orders,urgent orders,subscription-based orders,bulk orders,customized orders]
