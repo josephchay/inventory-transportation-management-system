@@ -3,16 +3,19 @@
 #include <iostream>
 
 namespace blockchain {
-    void Chain::addBlock(std::unique_ptr<Block> block, const std::string& filename) {
+    Chain& Chain::addBlock(std::unique_ptr<Block> block) {
         block->setGenesis(block->getBlockNumber() == 0);
-
-        logBlockDetails(*block, filename);
-
         blocks.push_back(std::move(block));
+
+        return *this;
+    }
+
+    bool Chain::isEmpty() const {
+        return blocks.empty();
     }
 
     void Chain::displayBlockchain() const {
-        std::cout << "\n---------------- BLOCKCHAIN INFORMATION: ----------------\n\n";
+        std::cout << "\n------------------- BLOCKCHAIN INFORMATION -------------------\n\n";
         for (const auto& block : blocks) {
             std::cout << "Block Type --> " << block->getBlockType() << "\n"
                       << "Block --> " << block->getBlockNumber() << (block->isGenesis() ? " (Genesis Block)" : "") << "\n"
@@ -44,5 +47,12 @@ namespace blockchain {
         writer.writeLine("Timestamp: " + block.getTimestamp());
         writer.writeLine("Information: " + block.getInformationString());
         writer.writeLine(""); // Add an empty line for readability
+    }
+
+    void Chain::addToRecord(const std::string& filename) {
+        if (!blocks.empty()) {
+            const auto& block = blocks.back();
+            logBlockDetails(*block, filename);
+        }
     }
 }

@@ -1,5 +1,5 @@
-#ifndef DATA_READER_H
-#define DATA_READER_H
+#ifndef FILEREADER_H
+#define FILEREADER_H
 
 #include <string>
 #include <set>
@@ -7,16 +7,34 @@
 #include <regex>
 
 namespace data {
+    enum class DataType {
+        OPTION,
+        CHAIN
+    };
+
+    struct BlockInfo {
+        std::string blockType;
+        int blockNumber;
+        std::string currentHash;
+        std::string previousHash;
+        std::string timestamp;
+        std::string information;
+    };
+
     class FileReader {
     public:
-        explicit FileReader(const std::string& filePath);
+        explicit FileReader(const std::string& filePath, DataType datatype);
 
-        void parseFile(const std::string& filePath);
+        void parseOptionFile(const std::string& filePath);
+        void parseChainFile(const std::string& filePath);
         std::vector<std::string> getAllInitialOptions() const;
         std::vector<std::string> getDataById(const std::string& id) const;
         static std::vector<std::string> parseBracketOptions(const std::string& bracketedString);
 
+        const std::vector<BlockInfo>& getBlocks() const;
+
     private:
+        std::vector<BlockInfo> blocks;
         std::vector<std::string> orderedOptions;
         std::map<std::string, std::vector<std::string>> idToDataMap;
 
@@ -24,7 +42,8 @@ namespace data {
         static void trimSquareBrackets(std::string& str);
         static std::vector<std::string> splitLine(const std::string& line);
         static std::set<std::string> parseOptions(const std::string& options);
+        std::string extractBlockData(const std::string& line) const;
     };
 } // namespace data
 
-#endif // DATA_READER_H
+#endif // FILEREADER_H

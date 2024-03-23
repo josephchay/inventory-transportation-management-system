@@ -6,18 +6,22 @@
 #include "Block.h"
 
 namespace blockchain {
-    Block::Block(int blockNumber, const std::string& previousBlockHash, const std::string& information, const std::string& blockType)
-            : blockNumber(blockNumber), previousBlockHash(previousBlockHash), informationString(information), blockType(blockType) {
+    Block::Block(int number, const std::string& previousHash, const std::string& information, const std::string& blockType, const std::string& currentHash)
+            : number(number), previousHash(previousHash), informationString(information), blockType(blockType), currentHash(currentHash) {
         // Initialize timestamp with the current date and time
         std::time_t currentTime = std::time(nullptr);
         this->timestamp = formatTimestamp(currentTime);
 
         // Generate a current block hash
-        this->currentBlockHash = generateRandomHash(60);
+        if (this->currentHash.empty()) {
+            this->currentHash = generateRandomHash(60);
+        } else {
+            this->currentHash = currentHash;
+        }
 
         // For a genesis block, set the previous block hash to its own hash
-        if (previousBlockHash.empty() || previousBlockHash == "0") {
-            this->previousBlockHash = this->currentBlockHash;
+        if (previousHash.empty() || previousHash == "0") {
+            this->previousHash = this->currentHash;
         }
     }
 
@@ -49,9 +53,9 @@ namespace blockchain {
 
     // Getter methods
     std::string Block::getBlockType() const { return blockType; }
-    int Block::getBlockNumber() const { return blockNumber; }
-    std::string Block::getCurrentBlockHash() const { return currentBlockHash; }
-    std::string Block::getPreviousBlockHash() const { return previousBlockHash; }
+    int Block::getBlockNumber() const { return number; }
+    std::string Block::getCurrentBlockHash() const { return currentHash; }
+    std::string Block::getPreviousBlockHash() const { return previousHash; }
     std::string Block::getTimestamp() const { return timestamp; }
     std::string Block::getInformationString() const { return informationString; }
     bool Block::isGenesis() const { return genesis; }

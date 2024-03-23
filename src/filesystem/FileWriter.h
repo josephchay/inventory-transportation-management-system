@@ -1,5 +1,5 @@
-#ifndef DATAWRITER_H
-#define DATAWRITER_H
+#ifndef FILEWRITER_H
+#define FILEWRITER_H
 
 #include <string>
 #include <fstream>
@@ -16,4 +16,4 @@ namespace filesystem {
     };
 }
 
-#endif // DATAWRITER_H
+#endif // FILEWRITER_H

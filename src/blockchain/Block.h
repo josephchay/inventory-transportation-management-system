@@ -16,20 +16,20 @@ namespace blockchain {
         [[nodiscard]] std::string getPreviousBlockHash() const;
         [[nodiscard]] std::string getTimestamp() const;
         [[nodiscard]] std::string getInformationString() const;
-        bool isGenesis() const;
+        [[nodiscard]] bool isGenesis() const;
 
         void setGenesis(bool genesisValue);
 
     protected:
         std::string blockType;
-        int blockNumber;
-        std::string currentBlockHash;
-        std::string previousBlockHash;
+        int number;
+        std::string currentHash;
+        std::string previousHash;
         std::string timestamp;
         std::string informationString;
         bool genesis = false;
 
-        Block(int blockNumber, const std::string& previousBlockHash, const std::string& information, const std::string& blockType);
+        Block(int number, const std::string& previousHash, const std::string& information, const std::string& blockType, const std::string& currentHash = "");
 
         std::string formatTimestamp(std::time_t time) const;
 

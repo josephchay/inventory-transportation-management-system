@@ -1,8 +1,8 @@
 #include "TransactionBlock.h"
 
 namespace blockchain {
-    TransactionBlock::TransactionBlock(int blockNumber, const std::string& previousBlockHash, TransactionInfo& info)
-            : Block(blockNumber, previousBlockHash, formatTransactionInfo(info), "Transaction"), info(info) {
+    TransactionBlock::TransactionBlock(int number, const std::string& previousHash, TransactionInfo& info, const std::string& currentHash)
+            : Block(number, previousHash, formatTransactionInfo(info), "Transaction", currentHash), info(info) {
         // No additional initialization needed here
     }
 

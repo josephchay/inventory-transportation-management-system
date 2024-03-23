@@ -1,8 +1,8 @@
 #include "TransporterBlock.h"
 
 namespace blockchain {
-    TransporterBlock::TransporterBlock(int blockNumber, const std::string& previousBlockHash, const TransporterInfo& info)
-            : Block(blockNumber, previousBlockHash, formatTransporterInfo(info), "Transporter"), info(info) {
+    TransporterBlock::TransporterBlock(int number, const std::string& previousHash, const TransporterInfo& info, const std::string& currentHash)
+            : Block(number, previousHash, formatTransporterInfo(info), "Transporter", currentHash), info(info) {
         // No additional initialization needed here
     }
 
@@ -11,6 +11,7 @@ namespace blockchain {
         oss << "ID: " << info.transporterId
             << " | Name: " << info.transporterName
             << " | Product Type: " << info.productType
+            << " | Transportation Type: " << info.transportationType
             << " | Ordering Type: " << info.orderingType
             << " | Ordering Amount (Kg): " << info.orderingAmount;
         return oss.str();

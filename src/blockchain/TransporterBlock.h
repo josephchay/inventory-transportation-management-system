@@ -19,7 +19,7 @@ namespace blockchain {
 
     class TransporterBlock : public Block {
     public:
-        TransporterBlock(int blockNumber, const std::string& previousBlockHash, const TransporterInfo& info);
+        TransporterBlock(int number, const std::string& previousHash, const TransporterInfo& info, const std::string& currentHash = "");
 
         TransporterInfo getInfo() const;
 

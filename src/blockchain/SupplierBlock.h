@@ -20,11 +20,11 @@ namespace blockchain {
         /**
          * @brief Construct a new Supplier Block object
          *
-         * @param blockNumber
-         * @param previousBlockHash
+         * @param number
+         * @param previousHash
          * @param info
          */
-        SupplierBlock(int blockNumber, const std::string& previousBlockHash, const SupplierInfo& info);
+        SupplierBlock(int number, const std::string& previousHash, const SupplierInfo& info, const std::string& currenHash = "");
 
         /**
          * @brief Get the supplier information.

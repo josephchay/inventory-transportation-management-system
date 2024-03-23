@@ -14,9 +14,8 @@ namespace collection::validation {
         while (true) {
             std::cout << "Enter " << topic << ": ";
             std::getline(std::cin, input);
-            if (input.empty()) {
-                std::cout << "Input cannot be empty. Please try again.\n";
-            } else {
+
+            if (isExitCommand(input) || !isEmptyInput(input)) {
                 std::cout << "Entered " << topic << ": " << input << std::endl << std::endl;
                 return input; // Return the valid, non-empty input
             }
@@ -35,10 +34,9 @@ namespace collection::validation {
         while (true) {
             std::cout << "Enter " << topic << ": ";
             std::getline(std::cin, input);
-            if (input.empty()) {
-                std::cout << "Input cannot be empty. Please try again.\n";
-                continue;
-            }
+
+            if (isExitCommand(input) || isEmptyInput(input)) continue;
+
             std::stringstream inputStream(input);
             if (!(inputStream >> value) || !(inputStream.eof())) { // Checks for exact match and no extra characters
                 std::cout << "Invalid input. Please enter an integer.\n";
@@ -66,10 +64,9 @@ namespace collection::validation {
         while (true) {
             std::cout << "Enter " << topic << ": ";
             std::getline(std::cin, input);
-            if (input.empty()) {
-                std::cout << "Input cannot be empty. Please try again.\n";
-                continue;
-            }
+
+            if (isExitCommand(input) || isEmptyInput(input)) continue;
+
             std::stringstream inputStream(input);
             if (!(inputStream >> value) || !(inputStream.eof())) { // Checks for exact match and no extra characters
                 std::cout << "Invalid input. Please enter a valid number.\n";
@@ -97,9 +94,10 @@ namespace collection::validation {
         while (true) {
             std::cout << "Enter " << topic << ": ";
             std::getline(std::cin, input);
-            if (input.empty()) {
-                std::cout << "Input cannot be empty. Please try again.\n";
-            } else if (!std::regex_match(input, datePattern)) {
+
+            if (isExitCommand(input) || isEmptyInput(input)) continue;
+
+            if (!std::regex_match(input, datePattern)) {
                 std::cout << "Invalid date format. Please enter in dd/mm/yyyy format.\n";
             } else {
                 return input;
@@ -125,9 +123,10 @@ namespace collection::validation {
         while (true) {
             std::cout << "Enter " << topic << ": ";
             std::getline(std::cin, input);
-            if (input.empty()) {
-                std::cout << "Input cannot be empty. Please try again.\n";
-            } else if (!std::regex_match(input, timePattern)) {
+
+            if (isExitCommand(input) || isEmptyInput(input)) continue;
+
+            if (!std::regex_match(input, timePattern)) {
                 std::cout << "Invalid time format. Please enter in hh:mm AM/PM format.\n";
             } else {
                 return input;
@@ -154,9 +153,10 @@ namespace collection::validation {
         do {
             std::cout << "Enter " << topic << ": ";
             std::getline(std::cin, input);
-            if (input.empty()) {
-                std::cout << "Input cannot be empty. Please try again.\n";
-            } else if (!std::regex_match(input, currencyPattern)) {
+
+            if (isExitCommand(input) || isEmptyInput(input)) continue;
+
+            if (!std::regex_match(input, currencyPattern)) {
                 std::cout << "Invalid currency format. Please enter a numeric value with at most two decimal places (e.g., 1234.56).\n";
             } else {
                 break; // Valid currency format
@@ -180,6 +180,8 @@ namespace collection::validation {
             std::cin >> choice;
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear the input buffer
 
+            if (isExitCommand(std::to_string(choice))) break;
+
             if (std::cin.fail() || choice < 1 || choice > static_cast<int>(options.size())) {
                 std::cin.clear(); // Clear error flags
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear input
@@ -200,8 +202,9 @@ namespace collection::validation {
         // Loop until a valid response is received
         while (true) {
             std::cout << "Confirm " << topic << ": " << value << "\nConfirm? (y/n): ";
-            std::cin >> input;
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear the newline character
+            std::getline(std::cin, input);
+
+            if (isExitCommand(input)) break;
 
             // Check for valid input
             if (input == "y" || input == "Y") {
@@ -213,5 +216,20 @@ namespace collection::validation {
                 std::cout << "Invalid input. Please enter 'y' or 'Y' or 'n' or 'N' only.\n";
             }
         }
+    }
+
+    bool InputValidator::isExitCommand(const std::string& input) {
+        if (input == "q" || input == "quit") {
+            std::exit(0); // Use exit(0) to terminate the program
+        }
+        return false;
+    }
+
+    bool InputValidator::isEmptyInput(const std::string& input) {
+        if (input.empty()) {
+            std::cout << "Input cannot be empty. Please try again.\n";
+            return true;
+        }
+        return false;
     }
 }

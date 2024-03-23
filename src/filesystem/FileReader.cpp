@@ -6,8 +6,17 @@
 #include <iostream>
 
 namespace data {
-    FileReader::FileReader(const std::string& filePath) {
-        parseFile(filePath);
+    FileReader::FileReader(const std::string& filePath, DataType datatype) {
+        switch (datatype) {
+            case DataType::OPTION:
+                parseOptionFile(filePath);
+                break;
+            case DataType::CHAIN:
+                parseChainFile(filePath);
+                break;
+            default:
+                std::cerr << "Unsupported file type" << std::endl;
+        }
     }
 
     /**
@@ -19,6 +28,10 @@ namespace data {
         return orderedOptions;
     }
 
+    const std::vector<BlockInfo>& FileReader::getBlocks() const {
+        return blocks;
+    }
+
     std::vector<std::string> FileReader::getDataById(const std::string& id) const {
         auto it = idToDataMap.find(id);
         if (it != idToDataMap.end()) {
@@ -27,7 +40,7 @@ namespace data {
         return {}; // Return empty vector if ID not found
     }
 
-    void FileReader::parseFile(const std::string& filePath) {
+    void FileReader::parseOptionFile(const std::string& filePath) {
         std::ifstream file(filePath);
         std::string line;
         while (std::getline(file, line)) {
@@ -38,6 +51,51 @@ namespace data {
                 idToDataMap[id] = tokens;
             }
         }
+    }
+
+    void FileReader::parseChainFile(const std::string& filePath) {
+        std::ifstream file(filePath);
+        if (!file.is_open()) {
+            throw std::runtime_error("Failed to open file: " + filePath);
+        }
+
+        std::string line;
+        BlockInfo currentBlock;
+        bool blockStarted = false;
+
+        while (getline(file, line)) {
+            if (line.find("Block Type:") != std::string::npos) {
+                if (blockStarted) {
+                    // Save the previous block before starting a new one
+                    blocks.push_back(currentBlock);
+                    currentBlock = BlockInfo(); // Reset for next block
+                }
+                currentBlock.blockType = extractBlockData(line);
+                blockStarted = true;
+            } else if (line.find("Block Number:") != std::string::npos) {
+                currentBlock.blockNumber = std::stoi(extractBlockData(line));
+            } else if (line.find("Current Hash:") != std::string::npos) {
+                currentBlock.currentHash = extractBlockData(line);
+            } else if (line.find("Previous Hash:") != std::string::npos) {
+                currentBlock.previousHash = extractBlockData(line);
+            } else if (line.find("Timestamp:") != std::string::npos) {
+                currentBlock.timestamp = extractBlockData(line);
+            } else if (line.find("Information:") != std::string::npos) {
+                currentBlock.information = extractBlockData(line);
+            }
+        }
+
+        if (blockStarted) { // Don't forget to add the last block if there is one
+            blocks.push_back(currentBlock);
+        }
+    }
+
+    std::string FileReader::extractBlockData(const std::string& line) const {
+        auto pos = line.find(':');
+        if (pos != std::string::npos && pos + 1 < line.length()) {
+            return line.substr(pos + 2); // Skip the colon and space
+        }
+        return "";
     }
 
     void FileReader::trim(std::string& s) {

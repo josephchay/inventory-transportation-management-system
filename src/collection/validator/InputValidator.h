@@ -15,5 +15,7 @@ namespace collection::validation {
         std::string validateCurrencyInput(const std::string& topic);
         static std::string validateSelection(const std::string& topic, const std::vector<std::string>& options);
         static bool confirmValue(const std::string& topic, const std::string& value);
+        static bool isExitCommand(const std::string& input);
+        static bool isEmptyInput(const std::string& input);
     };
 }

@@ -8,7 +8,7 @@ namespace collection {
     blockchain::SupplierInfo Prompt::collectSupplierInfo(const std::string& optionsFilePath) {
         std::string id, name, location, branch;
 
-        data::FileReader reader(optionsFilePath);
+        data::FileReader reader(optionsFilePath, data::DataType::OPTION);
 
         auto allIds = reader.getAllInitialOptions();
         id = validation::InputValidator::validateSelection("supplier ID", allIds);
@@ -30,7 +30,7 @@ namespace collection {
     blockchain::TransporterInfo Prompt::collectTransporterInfo(const std::string& optionsFilePath) {
         std::string id, name, productType, transportationType, orderingType;
 
-        data::FileReader reader(optionsFilePath);
+        data::FileReader reader(optionsFilePath, data::DataType::OPTION);
 
         // Fetch all transporter IDs for selection
         auto allIds = reader.getAllInitialOptions();
@@ -59,7 +59,7 @@ namespace collection {
         int id;
         std::string retailerPerTripCreditBalance, annualOrderingCreditBalance, paymentType, productOrderingLimit;
 
-        data::FileReader reader(optionsFilePath);
+        data::FileReader reader(optionsFilePath, data::DataType::OPTION);
 
         auto allPaymentTypes = reader.getAllInitialOptions();
 

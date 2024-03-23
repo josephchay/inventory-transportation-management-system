@@ -7,10 +7,12 @@
 namespace blockchain {
     class Chain {
     public:
-        void addBlock(std::unique_ptr<Block> block, const std::string& filename);
+        Chain& addBlock(std::unique_ptr<Block> block);
         void displayBlockchain() const;
-        int getNextBlockNumber() const;
-        std::string getLastBlockHash() const;
+        [[nodiscard]] int getNextBlockNumber() const;
+        [[nodiscard]] std::string getLastBlockHash() const;
+        [[nodiscard]] bool isEmpty() const;
+        void addToRecord(const std::string& filename);
 
     private:
         std::vector<std::unique_ptr<Block>> blocks;
