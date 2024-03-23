@@ -1,6 +1,7 @@
 #include "InputValidator.h"
 #include <iostream>
 #include <limits>
+#include <set>
 
 namespace collection::validation {
     /**
@@ -214,6 +215,44 @@ namespace collection::validation {
                 return false;
             } else {
                 std::cout << "Invalid input. Please enter 'y' or 'Y' or 'n' or 'N' only.\n";
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @brief Validates user input to ensure it is unique compared to a set of existing values.
+     *
+     * This function prompts the user with a custom message and attempts to read a string value from the input.
+     * It then checks if the input is already present in a provided set of existing values. If the input is not unique,
+     * it prompts the user again. This process repeats until a unique input is entered.
+     *
+     * @param topic The custom message displayed to the user prompting for input.
+     * @param existingValues The set of existing values to compare against for uniqueness.
+     * @return A unique string value entered by the user.
+     */
+    std::string InputValidator::validateUniqueIdInt(const std::string& topic, const std::vector<int>& existingValues) {
+        int value;
+        std::string input;
+        while (true) {
+            std::cout << "Enter " << topic << ": ";
+            std::getline(std::cin, input);
+
+            if (isExitCommand(input)) continue;
+            if (isEmptyInput(input)) continue;
+
+            std::stringstream inputStream(input);
+            if (!(inputStream >> value) || !(inputStream.eof())) {
+                std::cout << "Invalid input. Please enter an integer.\n";
+                continue;
+            }
+
+            if (std::find(existingValues.begin(), existingValues.end(), value) != existingValues.end()) {
+                std::cout << "The entered " << topic << " has been taken. Please enter a unique value.\n";
+            } else {
+                std::cout << "Entered " << topic << ": " << value << std::endl << std::endl;
+                return std::to_string(value); // Convert the integer back to string for return
             }
         }
     }

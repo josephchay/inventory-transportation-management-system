@@ -47,7 +47,7 @@ int main() {
                 blockchain.addBlock(std::move(block)).addToRecord(R"(../data/records/chain.txt)");
             },
             [&]{
-                auto info = collection::Prompt::collectTransactionInfo(R"(../data/options/transactions.txt)");
+                auto info = collection::Prompt::collectTransactionInfo(R"(../data/options/transactions.txt)", R"(../data/records/chain.txt)");
                 auto block = std::make_unique<blockchain::TransactionBlock>(blockchain.getNextBlockNumber(), blockchain.getLastBlockHash(), info);
                 blockchain.addBlock(std::move(block)).addToRecord(R"(../data/records/chain.txt)");
             }

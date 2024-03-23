@@ -53,6 +53,48 @@ namespace data {
         }
     }
 
+    std::vector<int> FileReader::extractBlockIds(const std::string& filePath, const std::string& blockType) {
+        std::ifstream file(filePath);
+        std::vector<int> ids;
+        std::string line;
+        bool isTargetBlock = false;
+
+        if (!file.is_open()) {
+            std::cerr << "Failed to open file: " << filePath << std::endl;
+            return ids;
+        }
+
+        while (std::getline(file, line)) {
+            // Identify the start of the target block
+            if (line.find("Block Type: " + blockType) != std::string::npos) {
+                isTargetBlock = true;
+            }
+
+            // Once inside the target block, look for the "Information" line
+            if (isTargetBlock && line.find("Information: ") != std::string::npos) {
+                // Extract ID from the Information line
+                std::istringstream iss(line);
+                std::string part;
+                while (std::getline(iss, part, '|')) {
+                    std::size_t idPos = part.find("ID: ");
+                    if (idPos != std::string::npos) {
+                        try {
+                            std::string idStr = part.substr(idPos + 4); // 4 is the length of "ID: "
+                            int id = std::stoi(idStr);
+                            ids.push_back(id);
+                            break; // Assuming only one ID per Information line
+                        } catch (const std::exception& e) {
+                            std::cerr << "Error converting ID to integer: " << e.what() << std::endl;
+                        }
+                    }
+                }
+                isTargetBlock = false; // Reset for the next block
+            }
+        }
+
+        return ids;
+    }
+
     void FileReader::parseChainFile(const std::string& filePath) {
         std::ifstream file(filePath);
         if (!file.is_open()) {

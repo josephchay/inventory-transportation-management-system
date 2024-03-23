@@ -32,12 +32,13 @@ namespace data {
         static std::vector<std::string> parseBracketOptions(const std::string& bracketedString);
 
         const std::vector<BlockInfo>& getBlocks() const;
+        static std::vector<int> extractBlockIds(const std::string& filePath, const std::string& blockType);
 
     private:
         std::vector<BlockInfo> blocks;
         std::vector<std::string> orderedOptions;
-        std::map<std::string, std::vector<std::string>> idToDataMap;
 
+        std::map<std::string, std::vector<std::string>> idToDataMap;
         static void trim(std::string& s);
         static void trimSquareBrackets(std::string& str);
         static std::vector<std::string> splitLine(const std::string& line);

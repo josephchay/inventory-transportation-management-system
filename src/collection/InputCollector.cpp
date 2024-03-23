@@ -55,7 +55,7 @@ namespace collection {
         return blockchain::TransporterInfo(std::stoi(id), name, productType, transportationType, orderingType, orderingAmount);
     }
 
-    blockchain::TransactionInfo Prompt::collectTransactionInfo(const std::string& optionsFilePath) {
+    blockchain::TransactionInfo Prompt::collectTransactionInfo(const std::string& optionsFilePath, const std::string& recordsFilePath) {
         int id;
         std::string retailerPerTripCreditBalance, annualOrderingCreditBalance, paymentType, productOrderingLimit;
 
@@ -63,7 +63,9 @@ namespace collection {
 
         auto allPaymentTypes = reader.getAllInitialOptions();
 
-        id = collection::validation::InputValidator::validateInt("transaction ID (unique)");
+        std::vector<int> transactionIds = data::FileReader::extractBlockIds(recordsFilePath, "Transaction");
+
+        id = std::stoi(collection::validation::InputValidator::validateUniqueIdInt("transaction ID (unique)", transactionIds));
         retailerPerTripCreditBalance = collection::validation::InputValidator::validateString("retailer per trip credit balance (RM)");
         annualOrderingCreditBalance = collection::validation::InputValidator::validateString("annual ordering credit balance (RM)");
         paymentType = validation::InputValidator::validateSelection("supplier ID", allPaymentTypes);
@@ -71,7 +73,10 @@ namespace collection {
         auto selectedData = reader.getDataById(paymentType);
 
         auto productOrderingLimitOptions = data::FileReader::parseBracketOptions(selectedData[2]);
-        productOrderingLimit = collection::validation::InputValidator::validateSelection("product ordering limit", productOrderingLimitOptions);
+        std::string productOrderingLimitType = collection::validation::InputValidator::validateSelection("product ordering limit", productOrderingLimitOptions);
+
+        productOrderingLimit = collection::validation::InputValidator::validateString("product ordering limit (" + productOrderingLimitType + ")");
+        productOrderingLimit = "(" + productOrderingLimitType + ") " + productOrderingLimit;
 
         return blockchain::TransactionInfo(id, retailerPerTripCreditBalance, annualOrderingCreditBalance, paymentType, productOrderingLimit);
     }
