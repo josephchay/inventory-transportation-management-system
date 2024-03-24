@@ -23,4 +23,6 @@ add_executable(inventory_transportation_management_system src/main.cpp
         src/collection/validator/InputValidator.cpp
         src/collection/validator/InputValidator.h
         src/collection/conversion/DataConverter.h
-        src/collection/conversion/DataConverter.cpp)
+        src/collection/conversion/DataConverter.cpp
+        src/utils/Structures.h
+        src/utils/Structures.cpp)

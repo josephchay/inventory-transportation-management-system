@@ -1,0 +1,7 @@
+Block Type: Supplier
+Block Number: 0
+Current Hash: 049Zg5paNu2YA3swlqqe589oaTohZbaot3p64QMifiLRoEsZS6lOYy4wl4hE
+Previous Hash: 049Zg5paNu2YA3swlqqe589oaTohZbaot3p64QMifiLRoEsZS6lOYy4wl4hE
+Timestamp: 2024-03-24 15:47:34
+Information: ID: 32141 | Name: the big bro | Location: Big submaaaaaaaaaaaaaaaaa, True | Branch: Subang Jaya
+

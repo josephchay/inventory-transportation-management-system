@@ -2,27 +2,38 @@
 #include "InputCollector.h"
 #include "validator/InputValidator.h"
 #include "../filesystem/FileReader.h"
+#include "../filesystem/FileWriter.h"
+#include "../utils/Structures.h"
 #include <string>
 
 namespace collection {
+    static std::string validateAndEditField(const std::string& fieldName, const std::string& currentValue, const std::string& optionsFilePath, int row, int column) {
+        bool confirmed = validation::InputValidator::validateConfirmValue(fieldName, currentValue);
+        if (!confirmed) {
+            bool editAction = validation::InputValidator::validateConfirm("edit " + fieldName);
+            if (editAction) {
+                std::string newValue = validation::InputValidator::validateString(fieldName);
+                filesystem::FileWriter::modifyCell(optionsFilePath, row, column, newValue);
+                return newValue;
+            }
+        }
+        return currentValue; // Return the original or edited value
+    }
+
     blockchain::SupplierInfo Prompt::collectSupplierInfo(const std::string& optionsFilePath) {
         std::string id, name, location, branch;
 
-        data::FileReader reader(optionsFilePath, data::DataType::OPTION);
+        filesystem::FileReader reader(optionsFilePath, filesystem::DataType::OPTION);
 
         auto allIds = reader.getAllInitialOptions();
         id = validation::InputValidator::validateSelection("supplier ID", allIds);
+        int row = utils::Structures::findVectorIndex(allIds, id);
 
         auto selectedData = reader.getDataById(id);
 
-        name = selectedData[2];
-        name = validation::InputValidator::confirmValue("supplier name", name) ? name : "";
-
-        location = selectedData[3];
-        location = validation::InputValidator::confirmValue("supplier location", location) ? location : "";
-
-        branch = selectedData[4];
-        branch = validation::InputValidator::confirmValue("supplier branch", branch) ? branch : "";
+        name = validateAndEditField("supplier name", selectedData[2], optionsFilePath, row, 2);
+        location = validateAndEditField("supplier location", selectedData[3], optionsFilePath, row, 3);
+        branch = validateAndEditField("supplier branch", selectedData[4], optionsFilePath, row, 4);
 
         return blockchain::SupplierInfo(std::stoi(id), name, location, branch);
     }
@@ -30,24 +41,32 @@ namespace collection {
     blockchain::TransporterInfo Prompt::collectTransporterInfo(const std::string& optionsFilePath) {
         std::string id, name, productType, transportationType, orderingType;
 
-        data::FileReader reader(optionsFilePath, data::DataType::OPTION);
+        filesystem::FileReader reader(optionsFilePath, filesystem::DataType::OPTION);
 
         // Fetch all transporter IDs for selection
         auto allIds = reader.getAllInitialOptions();
         id = validation::InputValidator::validateSelection("transporter ID", allIds);
+        int row = utils::Structures::findVectorIndex(allIds, id);
 
         auto selectedData = reader.getDataById(id);
 
         name = selectedData[2];
-        name = validation::InputValidator::confirmValue("transporter name", name) ? name : "";
+        bool nameConfirmed = validation::InputValidator::validateConfirmValue("transporter name", name);
+        if (!nameConfirmed) {
+            bool nameEditAction = validation::InputValidator::validateConfirm("edit transporter name");
+            if (nameEditAction) {
+                name = validation::InputValidator::validateString("transporter name");
+                filesystem::FileWriter::modifyCell(optionsFilePath, row, 2, name);
+            }
+        }
 
-        auto productTypeOptions = data::FileReader::parseBracketOptions(selectedData[3]);
+        auto productTypeOptions = filesystem::FileReader::parseBracketOptions(selectedData[3]);
         productType = collection::validation::InputValidator::validateSelection("transporter product type", productTypeOptions);
 
-        auto transportationTypeOptions = data::FileReader::parseBracketOptions(selectedData[4]);
+        auto transportationTypeOptions = filesystem::FileReader::parseBracketOptions(selectedData[4]);
         transportationType = collection::validation::InputValidator::validateSelection("transporter transportation type", transportationTypeOptions);
 
-        auto orderingTypeOptions = data::FileReader::parseBracketOptions(selectedData[5]);
+        auto orderingTypeOptions = filesystem::FileReader::parseBracketOptions(selectedData[5]);
         orderingType = collection::validation::InputValidator::validateSelection("transporter ordering type", orderingTypeOptions);
 
         double orderingAmount = validation::InputValidator::validateDouble("transporter ordering payment type (kg)");
@@ -59,11 +78,11 @@ namespace collection {
         int id;
         std::string retailerPerTripCreditBalance, annualOrderingCreditBalance, paymentType, productOrderingLimit;
 
-        data::FileReader reader(optionsFilePath, data::DataType::OPTION);
+        filesystem::FileReader reader(optionsFilePath, filesystem::DataType::OPTION);
 
         auto allPaymentTypes = reader.getAllInitialOptions();
 
-        std::vector<int> transactionIds = data::FileReader::extractBlockIds(recordsFilePath, "Transaction");
+        std::vector<int> transactionIds = filesystem::FileReader::extractBlockIds(recordsFilePath, "Transaction");
 
         id = std::stoi(collection::validation::InputValidator::validateUniqueIdInt("transaction ID (unique)", transactionIds));
         retailerPerTripCreditBalance = collection::validation::InputValidator::validateString("retailer per trip credit balance (RM)");
@@ -72,7 +91,7 @@ namespace collection {
 
         auto selectedData = reader.getDataById(paymentType);
 
-        auto productOrderingLimitOptions = data::FileReader::parseBracketOptions(selectedData[2]);
+        auto productOrderingLimitOptions = filesystem::FileReader::parseBracketOptions(selectedData[2]);
         std::string productOrderingLimitType = collection::validation::InputValidator::validateSelection("product ordering limit", productOrderingLimitOptions);
 
         productOrderingLimit = collection::validation::InputValidator::validateString("product ordering limit (" + productOrderingLimitType + ")");

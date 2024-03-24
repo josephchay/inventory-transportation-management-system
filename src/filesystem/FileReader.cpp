@@ -5,7 +5,7 @@
 #include <vector>
 #include <iostream>
 
-namespace data {
+namespace filesystem {
     FileReader::FileReader(const std::string& filePath, DataType datatype) {
         switch (datatype) {
             case DataType::OPTION:
@@ -231,4 +231,4 @@ namespace data {
         }
         return options;
     }
-} // namespace data
+} // namespace filesystem

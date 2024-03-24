@@ -13,7 +13,7 @@ int main() {
     blockchain::Chain blockchain;
 
     // Initialize FileReader and read the block data
-    data::FileReader fileReader(R"(../data/records/chain.txt)", data::DataType::CHAIN);
+    filesystem::FileReader fileReader(R"(../data/records/chain.txt)", filesystem::DataType::CHAIN);
     const auto& blocks = fileReader.getBlocks();
 
     std::string lastBlockType = "";

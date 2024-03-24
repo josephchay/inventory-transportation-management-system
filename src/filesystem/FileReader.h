@@ -6,7 +6,7 @@
 #include <vector>
 #include <regex>
 
-namespace data {
+namespace filesystem {
     enum class DataType {
         OPTION,
         CHAIN
@@ -45,6 +45,6 @@ namespace data {
         static std::set<std::string> parseOptions(const std::string& options);
         std::string extractBlockData(const std::string& line) const;
     };
-} // namespace data
+} // namespace filesystem
 
 #endif // FILEREADER_H

@@ -22,7 +22,7 @@ namespace blockchain {
                       << "Current Hash --> " << block->getCurrentBlockHash() << "\n"
                       << "Previous Hash --> " << block->getPreviousBlockHash() << "\n"
                       << "Timestamp --> " << block->getTimestamp() << "\n"
-                      << "Information --> " << block->getInformationString() << "\n\n";
+                      << "Information --> " << "[ " << block->getInformationString() << " ]" << "\n\n";
         }
         std::cout << "---------------- END OF BLOCKCHAIN INFORMATION ----------------\n\n";
     }
