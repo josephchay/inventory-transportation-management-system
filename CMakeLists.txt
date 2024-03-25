@@ -28,4 +28,9 @@ add_executable(inventory_transportation_management_system src/main.cpp
         src/utils/Structures.cpp
         src/blockchain/BlockHeader.cpp
         libs/sha256/sha256.cpp
-        src/utils/Datetime.cpp)
+        libs/sha256/sha256.h
+        src/utils/Datetime.cpp
+        src/blockchain/enums/BlockType.cpp
+        src/blockchain/enums/BlockType.h
+        src/utils/Math.h
+        src/utils/Math.cpp)

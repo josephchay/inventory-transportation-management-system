@@ -39,11 +39,8 @@ namespace blockchain {
         }
     }
 
-    const int BlockHeader::VERSION = 1;
-
-    BlockHeader::BlockHeader(const std::string& informationString, int nonce, const std::string& currentHash, const std::string& previousHash)
-            : informationString(informationString) {
-
+    BlockHeader::BlockHeader(const int version, const std::string bits, const std::string& informationString, int nonce, const std::string& currentHash, const std::string& previousHash)
+            : version(version), bits(bits), informationString(informationString) {
         // Initialize timestamp with the current date and time
         std::time_t currentTime = std::time(nullptr);
         this->timestamp = currentTime;
@@ -52,7 +49,6 @@ namespace blockchain {
         // For a genesis block, set the previous block hash to initially 64 zeros
         this->previousHash = previousHash.empty() || previousHash == "0" ? std::string(64, '0') : previousHash;
         this->merkleRoot = sha256(informationString);
-        this->bits = "ffff001f";
 
         if (currentHash.empty()) {
             this->hash = mine();
@@ -82,7 +78,7 @@ namespace blockchain {
             // Construct the block header as a byte array for hashing
             std::vector<uint8_t> blockHeader;
 
-            appendIntToVector(blockHeader, VERSION);
+            appendIntToVector(blockHeader, version);
             appendHexToVector(blockHeader, previousHash);
             appendHexToVector(blockHeader, merkleRoot); // in hex value
             // Timestamp needs to be converted to bytes and appended

@@ -16,6 +16,7 @@ namespace blockchain {
         [[nodiscard]] int getNonce() const;
         [[nodiscard]] std::string getCurrentHash() const;
         [[nodiscard]] std::string getPrevHash() const;
+        [[nodiscard]] std::string getMerkleRoot() const;
         [[nodiscard]] time_t getTimestamp() const;
         [[nodiscard]] std::string getFormattedTimestamp() const;
         [[nodiscard]] std::string getInformationString() const;
@@ -24,11 +25,11 @@ namespace blockchain {
         void setGenesis(bool genesisValue);
 
     protected:
-        std::string blockType;
+        std::string type;
         int height;
         blockchain::BlockHeader header;
         bool genesis = false;
 
-        Block(int height, const std::string& previousHash, const std::string& information, const std::string& blockType, int nonce = 0, const std::string& currentHash = "");
+        Block(const int version, const std::string bits, int height, const std::string& previousHash, const std::string& information, const std::string& blockType, int nonce = 0, const std::string& currentHash = "");
     };
 } // namespace blockchain

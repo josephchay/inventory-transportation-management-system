@@ -16,49 +16,52 @@ int main() {
     filesystem::FileReader fileReader(R"(../data/records/chain.txt)", filesystem::DataType::CHAIN);
     const auto& blocks = fileReader.getBlocks();
 
-    std::string lastBlockType = "";
+    blockchain::enums::BlockType lastBlockType = blockchain::enums::BlockType::TRANSACTION; // Default to Transaction if no blocks were added
 
-    // Now, iterate over each BlockInfo and add the corresponding block to the blockchain
-    for (const auto& blockData : blocks) {
-        if (blockData.blockType == "Supplier") {
-            auto block = std::make_unique<blockchain::SupplierBlock>(conversion::DataConverter::convertToSupplierBlock(blockData.height, blockData.nonce, blockData.currentHash, blockData.previousHash, blockData.information));
-            blockchain.addBlock(std::move(block));
-        } else if (blockData.blockType == "Transporter") {
-            auto block = std::make_unique<blockchain::TransporterBlock>(conversion::DataConverter::convertToTransporterBlock(blockData.height, blockData.nonce, blockData.currentHash, blockData.previousHash, blockData.information));
-            blockchain.addBlock(std::move(block));
-        } else if (blockData.blockType == "Transaction") {
-            auto block = std::make_unique<blockchain::TransactionBlock>(conversion::DataConverter::convertToTransactionBlock(blockData.height, blockData.nonce, blockData.currentHash, blockData.previousHash, blockData.information));
-            blockchain.addBlock(std::move(block));
+    if (!blocks.empty()) {
+        // Now, iterate over each BlockInfo and add the corresponding block to the blockchain
+        for (const auto& blockData : blocks) {
+            if (blockData.type == blockchain::enums::BlockType::SUPPLIER) {
+                auto block = std::make_unique<blockchain::SupplierBlock>(conversion::DataConverter::convertToSupplierBlock(blockchain::Chain::VERSION, blockchain.getBits(), blockData.height, blockData.nonce, blockData.currentHash, blockData.previousHash, blockData.information));
+                blockchain.addBlock(std::move(block));
+            } else if (blockData.type == blockchain::enums::BlockType::TRANSPORTER) {
+                auto block = std::make_unique<blockchain::TransporterBlock>(conversion::DataConverter::convertToTransporterBlock(blockchain::Chain::VERSION, blockchain.getBits(), blockData.height, blockData.nonce, blockData.currentHash, blockData.previousHash, blockData.information));
+                blockchain.addBlock(std::move(block));
+            } else if (blockData.type == blockchain::enums::BlockType::TRANSACTION) {
+                auto block = std::make_unique<blockchain::TransactionBlock>(conversion::DataConverter::convertToTransactionBlock(blockchain::Chain::VERSION, blockchain.getBits(), blockData.height, blockData.nonce, blockData.currentHash, blockData.previousHash, blockData.information));
+                blockchain.addBlock(std::move(block));
+            }
+
+            lastBlockType = blockData.type;
         }
-
-        lastBlockType = blockData.blockType;
     }
 
     // Function vector to cycle through, using the Prompt class for data collection
     std::vector<std::function<void()>> functions = {
             [&]{
                 auto info = collection::Prompt::collectSupplierInfo(R"(../data/options/suppliers.txt)");
-                auto block = std::make_unique<blockchain::SupplierBlock>(blockchain.getNextBlockNumber(), blockchain.getLastBlockHash(), info);
+                auto block = std::make_unique<blockchain::SupplierBlock>(blockchain::Chain::VERSION, blockchain.getBits(), blockchain.getNextBlockHeight(), blockchain.getLastBlockHash(), info);
                 blockchain.addBlock(std::move(block)).addToRecord(R"(../data/records/chain.txt)");
             },
             [&]{
                 auto info = collection::Prompt::collectTransporterInfo(R"(../data/options/transporters.txt)");
-                auto block = std::make_unique<blockchain::TransporterBlock>(blockchain.getNextBlockNumber(), blockchain.getLastBlockHash(), info);
+                auto block = std::make_unique<blockchain::TransporterBlock>(blockchain::Chain::VERSION, blockchain.getBits(), blockchain.getNextBlockHeight(), blockchain.getLastBlockHash(), info);
                 blockchain.addBlock(std::move(block)).addToRecord(R"(../data/records/chain.txt)");
             },
             [&]{
                 auto info = collection::Prompt::collectTransactionInfo(R"(../data/options/transactions.txt)", R"(../data/records/chain.txt)");
-                auto block = std::make_unique<blockchain::TransactionBlock>(blockchain.getNextBlockNumber(), blockchain.getLastBlockHash(), info);
+                auto block = std::make_unique<blockchain::TransactionBlock>(blockchain::Chain::VERSION, blockchain.getBits(), blockchain.getNextBlockHeight(), blockchain.getLastBlockHash(), info);
                 blockchain.addBlock(std::move(block)).addToRecord(R"(../data/records/chain.txt)");
             }
     };
 
     int index = 0; // Default to Supplier if no blocks were added or if the last block was Transaction
-    if (lastBlockType == "Supplier") {
+    if (lastBlockType == blockchain::enums::BlockType::SUPPLIER) {
         index = 1; // Next should be Transporter
-    } else if (lastBlockType == "Transporter") {
+    } else if (lastBlockType == blockchain::enums::BlockType::TRANSPORTER) {
         index = 2; // Next should be Transaction
     }
+
     std::string continueInput;
 
     do {

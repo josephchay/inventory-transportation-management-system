@@ -16,6 +16,7 @@ namespace filesystem {
                 break;
             default:
                 std::cerr << "Unsupported file type" << std::endl;
+                break;
         }
     }
 
@@ -112,7 +113,7 @@ namespace filesystem {
                     blocks.push_back(currentBlock);
                     currentBlock = BlockInfo(); // Reset for next block
                 }
-                currentBlock.blockType = extractBlockData(line);
+                currentBlock.type = blockchain::enums::fromString(extractBlockData(line));
                 blockStarted = true;
             } else if (line.find("Height:") != std::string::npos) {
                 currentBlock.height = std::stoi(extractBlockData(line));

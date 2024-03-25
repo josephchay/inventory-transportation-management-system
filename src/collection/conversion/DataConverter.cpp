@@ -50,24 +50,24 @@ namespace conversion {
         return infoMap;
     }
 
-    blockchain::SupplierBlock DataConverter::convertToSupplierBlock(int height, int nonce, const std::string& currentHash, const std::string& previousHash, const std::string& data) {
+    blockchain::SupplierBlock DataConverter::convertToSupplierBlock(int version, const std::string bits, int height, int nonce, const std::string& currentHash, const std::string& previousHash, const std::string& data) {
         auto infoDetails = parseInformationField(data);
         blockchain::SupplierInfo info(std::stoi(infoDetails["ID"]), infoDetails["Name"], infoDetails["Location"], infoDetails["Branch"]);
 
-        return blockchain::SupplierBlock(height, previousHash, info, nonce, currentHash);
+        return blockchain::SupplierBlock(version, bits, height, previousHash, info, nonce, currentHash);
     }
 
-    blockchain::TransporterBlock DataConverter::convertToTransporterBlock(int height, int nonce, const std::string& currentHash, const std::string& previousHash, const std::string& data) {
+    blockchain::TransporterBlock DataConverter::convertToTransporterBlock(int version, const std::string bits, int height, int nonce, const std::string& currentHash, const std::string& previousHash, const std::string& data) {
         auto infoDetails = parseInformationField(data);
         blockchain::TransporterInfo info(std::stoi(infoDetails["ID"]), infoDetails["Name"], infoDetails["Product Type"], infoDetails["Transportation Type"], infoDetails["Ordering Type"], std::stod(infoDetails["Ordering Amount (Kg)"]));
 
-        return blockchain::TransporterBlock(height, previousHash, info, nonce, currentHash);
+        return blockchain::TransporterBlock(version, bits, height, previousHash, info, nonce, currentHash);
     }
 
-    blockchain::TransactionBlock DataConverter::convertToTransactionBlock(int height, int nonce, const std::string& currentHash, const std::string& previousHash, const std::string& data) {
+    blockchain::TransactionBlock DataConverter::convertToTransactionBlock(int version, const std::string bits, int height, int nonce, const std::string& currentHash, const std::string& previousHash, const std::string& data) {
         auto infoDetails = parseInformationField(data);
 
         blockchain::TransactionInfo info(std::stoi(infoDetails["ID"]), infoDetails["Retailer Per-Trip Credit Balance"], infoDetails["Annual Ordering Credit Balance"], infoDetails["Payment Type"], infoDetails["Product Ordering Limit"]);
-        return blockchain::TransactionBlock(height, previousHash, info, nonce, currentHash);
+        return blockchain::TransactionBlock(version, bits, height, previousHash, info, nonce, currentHash);
     }
 }

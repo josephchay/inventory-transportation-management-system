@@ -2,8 +2,8 @@
 #include <sstream>
 
 namespace blockchain {
-    SupplierBlock::SupplierBlock(int height, const std::string& previousHash, const SupplierInfo& info, int nonce, const std::string& currentHash)
-            : Block(height, previousHash, formatSupplierInfo(info), "Supplier", nonce, currentHash), info(info) {
+    SupplierBlock::SupplierBlock(const int version, const std::string bits, int height, const std::string& previousHash, const SupplierInfo& info, int nonce, const std::string& currentHash)
+            : Block(version, bits, height, previousHash, formatSupplierInfo(info), "Supplier", nonce, currentHash), info(info) {
         // The constructor initializes the Block part with formatted supplier information
     }
 

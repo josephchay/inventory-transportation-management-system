@@ -5,6 +5,7 @@
 #include <set>
 #include <vector>
 #include <regex>
+#include "../blockchain/enums/BlockType.cpp"
 
 namespace filesystem {
     enum class DataType {
@@ -13,7 +14,7 @@ namespace filesystem {
     };
 
     struct BlockInfo {
-        std::string blockType;
+        blockchain::enums::BlockType type;
         int height;
         int nonce;
         std::string currentHash;
