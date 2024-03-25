@@ -21,13 +21,13 @@ int main() {
     // Now, iterate over each BlockInfo and add the corresponding block to the blockchain
     for (const auto& blockData : blocks) {
         if (blockData.blockType == "Supplier") {
-            auto block = std::make_unique<blockchain::SupplierBlock>(conversion::DataConverter::convertToSupplierBlock(blockData.blockNumber, blockData.currentHash, blockData.previousHash, blockData.information));
+            auto block = std::make_unique<blockchain::SupplierBlock>(conversion::DataConverter::convertToSupplierBlock(blockData.height, blockData.nonce, blockData.currentHash, blockData.previousHash, blockData.information));
             blockchain.addBlock(std::move(block));
         } else if (blockData.blockType == "Transporter") {
-            auto block = std::make_unique<blockchain::TransporterBlock>(conversion::DataConverter::convertToTransporterBlock(blockData.blockNumber, blockData.currentHash, blockData.previousHash, blockData.information));
+            auto block = std::make_unique<blockchain::TransporterBlock>(conversion::DataConverter::convertToTransporterBlock(blockData.height, blockData.nonce, blockData.currentHash, blockData.previousHash, blockData.information));
             blockchain.addBlock(std::move(block));
         } else if (blockData.blockType == "Transaction") {
-            auto block = std::make_unique<blockchain::TransactionBlock>(conversion::DataConverter::convertToTransactionBlock(blockData.blockNumber, blockData.currentHash, blockData.previousHash, blockData.information));
+            auto block = std::make_unique<blockchain::TransactionBlock>(conversion::DataConverter::convertToTransactionBlock(blockData.height, blockData.nonce, blockData.currentHash, blockData.previousHash, blockData.information));
             blockchain.addBlock(std::move(block));
         }
 
@@ -68,6 +68,8 @@ int main() {
             blockchain.displayBlockchain();
         }
 
+        std::cout << "Enter values based on the given options or 'q'/'quit' to exit the program anytime." << std::endl << std::endl;
+
         // Call the function corresponding to the current index
         functions[index]();
 
@@ -76,7 +78,7 @@ int main() {
 
         bool validInput = false;
         while (!validInput) {
-            std::cout << "Proceed to add next block? (Type 'continue' to add, 'q' or 'quit' to exit): ";
+            std::cout << "Proceed to add next block? (Enter 'continue' to add or 'q'/'quit' to exit): ";
             std::cin >> continueInput;
             std::cin.ignore();
             std::cout << std::endl;

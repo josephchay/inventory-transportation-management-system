@@ -121,6 +121,24 @@ build CMakeFiles/inventory_transportation_management_system.dir/src/utils/Struct
   OBJECT_DIR = CMakeFiles\inventory_transportation_management_system.dir
   OBJECT_FILE_DIR = CMakeFiles\inventory_transportation_management_system.dir\src\utils
 
+build CMakeFiles/inventory_transportation_management_system.dir/src/blockchain/BlockHeader.cpp.obj: CXX_COMPILER__inventory_transportation_management_system_unscanned_Debug C$:/Users/joseph/Desktop/Everything/Nottingham$ University$ Malaysia/Year$ 2/Sem$ 2/C++$ Programming/coursework/system/src/blockchain/BlockHeader.cpp || cmake_object_order_depends_target_inventory_transportation_management_system
+  DEP_FILE = CMakeFiles\inventory_transportation_management_system.dir\src\blockchain\BlockHeader.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\inventory_transportation_management_system.dir
+  OBJECT_FILE_DIR = CMakeFiles\inventory_transportation_management_system.dir\src\blockchain
+
+build CMakeFiles/inventory_transportation_management_system.dir/libs/sha256/sha256.cpp.obj: CXX_COMPILER__inventory_transportation_management_system_unscanned_Debug C$:/Users/joseph/Desktop/Everything/Nottingham$ University$ Malaysia/Year$ 2/Sem$ 2/C++$ Programming/coursework/system/libs/sha256/sha256.cpp || cmake_object_order_depends_target_inventory_transportation_management_system
+  DEP_FILE = CMakeFiles\inventory_transportation_management_system.dir\libs\sha256\sha256.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\inventory_transportation_management_system.dir
+  OBJECT_FILE_DIR = CMakeFiles\inventory_transportation_management_system.dir\libs\sha256
+
+build CMakeFiles/inventory_transportation_management_system.dir/src/utils/Datetime.cpp.obj: CXX_COMPILER__inventory_transportation_management_system_unscanned_Debug C$:/Users/joseph/Desktop/Everything/Nottingham$ University$ Malaysia/Year$ 2/Sem$ 2/C++$ Programming/coursework/system/src/utils/Datetime.cpp || cmake_object_order_depends_target_inventory_transportation_management_system
+  DEP_FILE = CMakeFiles\inventory_transportation_management_system.dir\src\utils\Datetime.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\inventory_transportation_management_system.dir
+  OBJECT_FILE_DIR = CMakeFiles\inventory_transportation_management_system.dir\src\utils
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target inventory_transportation_management_system
@@ -129,7 +147,7 @@ build CMakeFiles/inventory_transportation_management_system.dir/src/utils/Struct
 #############################################
 # Link the executable inventory_transportation_management_system.exe
 
-build inventory_transportation_management_system.exe: CXX_EXECUTABLE_LINKER__inventory_transportation_management_system_Debug CMakeFiles/inventory_transportation_management_system.dir/src/main.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/blockchain/Block.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/blockchain/Chain.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/blockchain/SupplierBlock.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/blockchain/TransactionBlock.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/blockchain/TransporterBlock.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/collection/InputCollector.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/filesystem/FileReader.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/filesystem/FileWriter.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/collection/validator/InputValidator.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/collection/conversion/DataConverter.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/utils/Structures.cpp.obj
+build inventory_transportation_management_system.exe: CXX_EXECUTABLE_LINKER__inventory_transportation_management_system_Debug CMakeFiles/inventory_transportation_management_system.dir/src/main.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/blockchain/Block.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/blockchain/Chain.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/blockchain/SupplierBlock.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/blockchain/TransactionBlock.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/blockchain/TransporterBlock.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/collection/InputCollector.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/filesystem/FileReader.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/filesystem/FileWriter.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/collection/validator/InputValidator.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/collection/conversion/DataConverter.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/utils/Structures.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/blockchain/BlockHeader.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/libs/sha256/sha256.cpp.obj CMakeFiles/inventory_transportation_management_system.dir/src/utils/Datetime.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\inventory_transportation_management_system.dir

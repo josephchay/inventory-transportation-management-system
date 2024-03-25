@@ -8,16 +8,20 @@
 
 namespace collection {
     static std::string validateAndEditField(const std::string& fieldName, const std::string& currentValue, const std::string& optionsFilePath, int row, int column) {
-        bool confirmed = validation::InputValidator::validateConfirmValue(fieldName, currentValue);
-        if (!confirmed) {
-            bool editAction = validation::InputValidator::validateConfirm("edit " + fieldName);
-            if (editAction) {
-                std::string newValue = validation::InputValidator::validateString(fieldName);
-                filesystem::FileWriter::modifyCell(optionsFilePath, row, column, newValue);
-                return newValue;
+        while (true) { // Loop indefinitely until a return statement is executed
+            bool confirmed = validation::InputValidator::validateConfirmValue(fieldName, currentValue);
+            if (confirmed) {
+                return currentValue; // User confirmed the value, return it and exit the loop
+            } else {
+                bool editAction = validation::InputValidator::validateConfirm("edit " + fieldName);
+                if (editAction) {
+                    std::string newValue = validation::InputValidator::validateString(fieldName);
+                    filesystem::FileWriter::modifyCell(optionsFilePath, row, column, newValue);
+                    return newValue; // User edited the value, return the new value and exit the loop
+                }
+                // If editAction is false, the loop will continue, effectively restarting the process
             }
         }
-        return currentValue; // Return the original or edited value
     }
 
     blockchain::SupplierInfo Prompt::collectSupplierInfo(const std::string& optionsFilePath) {
@@ -50,15 +54,7 @@ namespace collection {
 
         auto selectedData = reader.getDataById(id);
 
-        name = selectedData[2];
-        bool nameConfirmed = validation::InputValidator::validateConfirmValue("transporter name", name);
-        if (!nameConfirmed) {
-            bool nameEditAction = validation::InputValidator::validateConfirm("edit transporter name");
-            if (nameEditAction) {
-                name = validation::InputValidator::validateString("transporter name");
-                filesystem::FileWriter::modifyCell(optionsFilePath, row, 2, name);
-            }
-        }
+        name = validateAndEditField("supplier name", selectedData[2], optionsFilePath, row, 2);
 
         auto productTypeOptions = filesystem::FileReader::parseBracketOptions(selectedData[3]);
         productType = collection::validation::InputValidator::validateSelection("transporter product type", productTypeOptions);

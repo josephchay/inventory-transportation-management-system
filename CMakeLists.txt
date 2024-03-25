@@ -25,4 +25,7 @@ add_executable(inventory_transportation_management_system src/main.cpp
         src/collection/conversion/DataConverter.h
         src/collection/conversion/DataConverter.cpp
         src/utils/Structures.h
-        src/utils/Structures.cpp)
+        src/utils/Structures.cpp
+        src/blockchain/BlockHeader.cpp
+        libs/sha256/sha256.cpp
+        src/utils/Datetime.cpp)

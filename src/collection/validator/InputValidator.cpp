@@ -168,7 +168,7 @@ namespace collection::validation {
     }
 
     std::string InputValidator::validateSelection(const std::string& topic, const std::vector<std::string>& options) {
-        std::string selectedOption;
+        std::string input;
         while (true) {
             // Display options
             for (size_t i = 0; i < options.size(); ++i) {
@@ -177,25 +177,30 @@ namespace collection::validation {
 
             // Get user's choice
             std::cout << "Select " << topic << ": ";
-            int choice;
-            std::cin >> choice;
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear the input buffer
+            std::getline(std::cin, input); // Use getline to read the input as a string
 
-            if (isExitCommand(std::to_string(choice))) break;
+            if (isExitCommand(input)) break;
 
-            if (std::cin.fail() || choice < 1 || choice > static_cast<int>(options.size())) {
-                std::cin.clear(); // Clear error flags
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear input
-                std::cout << "Invalid selection. Please try again.\n";
-                continue; // Go back to showing options
+            try {
+                int choice = std::stoi(input); // Convert input to integer
+
+                if (choice < 1 || choice > static_cast<int>(options.size())) {
+                    std::cout << "Invalid selection. Please try again.\n";
+                    continue; // Invalid selection, show options again
+                }
+
+                std::cout << "Selected " << topic << ": " << options[choice - 1] << std::endl << std::endl;
+                return options[choice - 1]; // Return the selected option
+            } catch (std::invalid_argument& e) {
+                // Non-integer input that's not an exit command
+                std::cout << "Invalid input. Please enter a number or 'q' to quit.\n";
+            } catch (std::out_of_range& e) {
+                // Input number too large for int
+                std::cout << "Selection out of range. Please try again.\n";
             }
-
-            selectedOption = options[choice - 1];
-            std::cout << "Selected " << topic << ": " << selectedOption << std::endl << std::endl;
-            break; // Valid selection, exit loop
         }
 
-        return selectedOption;
+        return ""; // Return an empty string or handle this case as needed
     }
 
     bool InputValidator::validateConfirm(const std::string& topic) {

@@ -6,15 +6,18 @@
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
+#include "BlockHeader.h"
 
 namespace blockchain {
     class Block {
     public:
-        [[nodiscard]] std::string getBlockType() const;
-        [[nodiscard]] int getBlockNumber() const;
-        [[nodiscard]] std::string getCurrentBlockHash() const;
-        [[nodiscard]] std::string getPreviousBlockHash() const;
-        [[nodiscard]] std::string getTimestamp() const;
+        [[nodiscard]] std::string getType() const;
+        [[nodiscard]] int getHeight() const;
+        [[nodiscard]] int getNonce() const;
+        [[nodiscard]] std::string getCurrentHash() const;
+        [[nodiscard]] std::string getPrevHash() const;
+        [[nodiscard]] time_t getTimestamp() const;
+        [[nodiscard]] std::string getFormattedTimestamp() const;
         [[nodiscard]] std::string getInformationString() const;
         [[nodiscard]] bool isGenesis() const;
 
@@ -22,28 +25,10 @@ namespace blockchain {
 
     protected:
         std::string blockType;
-        int number;
-        std::string currentHash;
-        std::string previousHash;
-        std::string timestamp;
-        std::string informationString;
+        int height;
+        blockchain::BlockHeader header;
         bool genesis = false;
 
-        Block(int number, const std::string& previousHash, const std::string& information, const std::string& blockType, const std::string& currentHash = "");
-
-        std::string formatTimestamp(std::time_t time) const;
-
-        /**
-         * Generates a random hash string using a high-quality random number generator.
-         * This function creates a string composed of randomly selected alphanumeric characters (a-z, A-Z, 0-9).
-         * The length of the generated hash can be specified by the caller.
-         *
-         * @param hashLength The desired length of the generated hash string. Default is 20 characters.
-         * @return A string containing a randomly generated hash of the specified length.
-         *
-         * Example usage:
-         * std::string myHash = generateRandomHash(20); // Generates a random hash string of 20 characters.
-         */
-        std::string generateRandomHash(size_t hashLength = 20) const;
+        Block(int height, const std::string& previousHash, const std::string& information, const std::string& blockType, int nonce = 0, const std::string& currentHash = "");
     };
 } // namespace blockchain

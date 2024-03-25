@@ -14,7 +14,8 @@ namespace filesystem {
 
     struct BlockInfo {
         std::string blockType;
-        int blockNumber;
+        int height;
+        int nonce;
         std::string currentHash;
         std::string previousHash;
         std::string timestamp;

@@ -1,7 +1,6 @@
 #include "FileWriter.h"
 #include <iostream>
 #include <vector>
-#include <sstream>
 
 namespace filesystem {
     // Constructor that opens the file

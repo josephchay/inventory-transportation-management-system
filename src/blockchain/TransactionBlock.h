@@ -18,7 +18,7 @@ namespace blockchain {
 
     class TransactionBlock : public Block {
     public:
-        TransactionBlock(int number, const std::string& previousHash, TransactionInfo& info, const std::string& currentHash = "");
+        TransactionBlock(int height, const std::string& previousHash, TransactionInfo& info, int nonce = 0, const std::string& currentHash = "");
 
         TransactionInfo getInfo() const;
 

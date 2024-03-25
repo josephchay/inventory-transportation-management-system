@@ -114,8 +114,10 @@ namespace filesystem {
                 }
                 currentBlock.blockType = extractBlockData(line);
                 blockStarted = true;
-            } else if (line.find("Block Number:") != std::string::npos) {
-                currentBlock.blockNumber = std::stoi(extractBlockData(line));
+            } else if (line.find("Height:") != std::string::npos) {
+                currentBlock.height = std::stoi(extractBlockData(line));
+            } else if (line.find("Nonce:") != std::string::npos) {
+                currentBlock.nonce = std::stoi(extractBlockData(line));
             } else if (line.find("Current Hash:") != std::string::npos) {
                 currentBlock.currentHash = extractBlockData(line);
             } else if (line.find("Previous Hash:") != std::string::npos) {
