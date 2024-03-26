@@ -26,7 +26,7 @@ namespace blockchain {
          * @param nonce
          * @param currenHash
          */
-        SupplierBlock(const int version, const std::string bits, int height, const std::string& previousHash, const SupplierInfo& info, int nonce = 0, const std::string& currenHash = "");
+        SupplierBlock(const int version, const std::string bits, int height, const std::string& previousHash, const SupplierInfo& info, int nonce = 0, const std::string& currenHash = "", bool visible = true);
 
         /**
          * @brief Get the supplier information.

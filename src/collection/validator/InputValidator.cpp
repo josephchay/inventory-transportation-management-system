@@ -222,29 +222,6 @@ namespace collection::validation {
         return -1;
     }
 
-    bool InputValidator::validateConfirm(const std::string& topic) {
-        std::string input;
-        // Loop until a valid response is received
-        while (true) {
-            std::cout << "Confirm " << topic << ": " << "\nConfirm? (y/n): ";
-            std::getline(std::cin, input);
-
-            if (isExitCommand(input)) break;
-
-            // Check for valid input
-            if (input == "y" || input == "Y") {
-                std::cout << "Confirmed " << topic << std::endl << std::endl;
-                return true;
-            } else if (input == "n" || input == "N") {
-                return false;
-            } else {
-                std::cout << "Invalid input. Please enter 'y' or 'Y' or 'n' or 'N' only.\n";
-            }
-        }
-
-        return false;
-    }
-
     bool InputValidator::validateConfirmValue(const std::string& topic, const std::string& value) {
         std::string input;
         // Loop until a valid response is received

@@ -12,7 +12,16 @@
 int main() {
     srand(static_cast<unsigned int>(time(0))); // Seed for random number generation
 
+    /**
+     * @brief The chain of blocks where all blocks are from the real data blockchain record.
+     */
     blockchain::Chain blockchain(data::Config::VERSION);
+
+    /**
+     * @brief The chain of blocks where some blocks are hidden (redacted) from the display view output to the user.
+     * aka. The temporary storage of the blockchain data.
+     */
+    blockchain::Chain redactedBlockchain(data::Config::VERSION);
 
     // Initialize FileReader and read the block data
     filesystem::FileReader fileReader(R"(../data/records/chain.txt)", filesystem::DataType::CHAIN);
@@ -24,14 +33,17 @@ int main() {
         // Now, iterate over each BlockInfo and add the corresponding block to the blockchain
         for (const auto& blockData : blocks) {
             if (blockData.type == blockchain::enums::BlockType::SUPPLIER) {
-                auto block = std::make_unique<blockchain::SupplierBlock>(conversion::DataConverter::convertToSupplierBlock(data::Config::VERSION, blockchain.getBits(), blockData.height, blockData.nonce, blockData.currentHash, blockData.previousHash, blockData.information));
-                blockchain.addBlock(std::move(block));
+                auto block = std::make_shared<blockchain::SupplierBlock>(conversion::DataConverter::convertToSupplierBlock(data::Config::VERSION, blockchain.getBits(), blockData.height, blockData.nonce, blockData.currentHash, blockData.previousHash, blockData.information, blockData.visible));
+                blockchain.addBlock(block);
+                redactedBlockchain.addBlock(block);
             } else if (blockData.type == blockchain::enums::BlockType::TRANSPORTER) {
-                auto block = std::make_unique<blockchain::TransporterBlock>(conversion::DataConverter::convertToTransporterBlock(data::Config::VERSION, blockchain.getBits(), blockData.height, blockData.nonce, blockData.currentHash, blockData.previousHash, blockData.information));
-                blockchain.addBlock(std::move(block));
+                auto block = std::make_shared<blockchain::TransporterBlock>(conversion::DataConverter::convertToTransporterBlock(data::Config::VERSION, blockchain.getBits(), blockData.height, blockData.nonce, blockData.currentHash, blockData.previousHash, blockData.information, blockData.visible));
+                blockchain.addBlock(block);
+                redactedBlockchain.addBlock(block);
             } else if (blockData.type == blockchain::enums::BlockType::TRANSACTION) {
-                auto block = std::make_unique<blockchain::TransactionBlock>(conversion::DataConverter::convertToTransactionBlock(data::Config::VERSION, blockchain.getBits(), blockData.height, blockData.nonce, blockData.currentHash, blockData.previousHash, blockData.information));
-                blockchain.addBlock(std::move(block));
+                auto block = std::make_shared<blockchain::TransactionBlock>(conversion::DataConverter::convertToTransactionBlock(data::Config::VERSION, blockchain.getBits(), blockData.height, blockData.nonce, blockData.currentHash, blockData.previousHash, blockData.information, blockData.visible));
+                blockchain.addBlock(block);
+                redactedBlockchain.addBlock(block);
             }
 
             lastBlockType = blockData.type;
@@ -42,23 +54,26 @@ int main() {
     std::vector<std::function<void()>> functions = {
             [&]{
                 auto info = collection::Prompt::collectSupplierInfo(R"(../data/options/suppliers.txt)");
-                auto block = std::make_unique<blockchain::SupplierBlock>(data::Config::VERSION, blockchain.getBits(), blockchain.getNextBlockHeight(), blockchain.getLastBlockHash(), info);
-                blockchain.addBlock(std::move(block)).addToRecord(R"(../data/records/chain.txt)");
+                auto block = std::make_shared<blockchain::SupplierBlock>(data::Config::VERSION, blockchain.getBits(), blockchain.getNextBlockHeight(), blockchain.getLastBlockHash(), info);
+                blockchain.addBlock(block).addToRecord(R"(../data/records/chain.txt)");
+                redactedBlockchain.addBlock(block);
             },
             [&]{
                 auto info = collection::Prompt::collectTransporterInfo(R"(../data/options/transporters.txt)");
-                auto block = std::make_unique<blockchain::TransporterBlock>(data::Config::VERSION, blockchain.getBits(), blockchain.getNextBlockHeight(), blockchain.getLastBlockHash(), info);
-                blockchain.addBlock(std::move(block)).addToRecord(R"(../data/records/chain.txt)");
+                auto block = std::make_shared<blockchain::TransporterBlock>(data::Config::VERSION, blockchain.getBits(), blockchain.getNextBlockHeight(), blockchain.getLastBlockHash(), info);
+                blockchain.addBlock(block).addToRecord(R"(../data/records/chain.txt)");
+                redactedBlockchain.addBlock(block);
             },
             [&]{
                 auto info = collection::Prompt::collectTransactionInfo(R"(../data/options/transactions.txt)", R"(../data/records/chain.txt)");
-                auto block = std::make_unique<blockchain::TransactionBlock>(data::Config::VERSION, blockchain.getBits(), blockchain.getNextBlockHeight(), blockchain.getLastBlockHash(), info);
-                blockchain.addBlock(std::move(block)).addToRecord(R"(../data/records/chain.txt)");
+                auto block = std::make_shared<blockchain::TransactionBlock>(data::Config::VERSION, blockchain.getBits(), blockchain.getNextBlockHeight(), blockchain.getLastBlockHash(), info);
+                blockchain.addBlock(block).addToRecord(R"(../data/records/chain.txt)");
+                redactedBlockchain.addBlock(block);
             }
     };
 
     std::string continueInput;
-    std::vector<std::string> actionOptions = { "Display blockchain", "Search Block", "Add Block" };
+    std::vector<std::string> actionOptions = { "Display blockchain", "Search Block", "Add Block", "Manipulate Block" };
     std::vector<std::string> searchOptions = { "Block Type", "Height", "Version", "Nonce", "Current Hash", "Previous Hash", "Merkle Root", "Timestamp", "Bits", "Information" };
 
     std::cout << "Enter values based on the given options or 'q'/'quit' to exit the program anytime." << std::endl << std::endl;
@@ -80,23 +95,31 @@ int main() {
     do {
         int action = collection::validation::InputValidator::validateSelectionInt("an action", actionOptions);
 
-        if (action == 1) {
-            if (blockchain.isEmpty()) {
-                std::cout << "No blocks found in the blockchain." << std::endl << std::endl;
-            } else {
-                blockchain.display();
+        switch (action) {
+            case 1:
+                if (redactedBlockchain.isEmpty()) {
+                    std::cout << "No blocks found in the blockchain." << std::endl << std::endl;
+                } else {
+                    redactedBlockchain.displayAll();
+                }
+                break;
+            case 2:
+            {
+                auto [searchAttr, searchValue] = collection::Prompt::collectSearchCriteria(searchOptions);
+
+                blockchain.display(blockchain.searchBlockByAttr(searchAttr, searchValue));
             }
-        } else if (action == 2) {
-            int searchByAttr = collection::validation::InputValidator::validateSelectionInt("a attribute to search by", searchOptions);
-            std::string searchValue = collection::validation::InputValidator::validateString("a value to search for");
+                break;
+            case 3:
+                // Call the function at the current index
+                functions[index]();
 
-            blockchain.searchBlockByAttr(static_cast<blockchain::enums::BlockAttribute>(searchByAttr - 1), searchValue);
-        } else if (action == 3) {
-            // Call the function at the current index
-            functions[index]();
-
-            // Move to the next type of block or loop back to the start
-            index = (index + 1) % functions.size();
+                // Move to the next type of block or loop back to the start
+                index = (index + 1) % functions.size();
+                break;
+            case 4:
+                collection::Prompt::collectBlockManipulationCriteria(blockchain, redactedBlockchain, searchOptions);
+                break;
         }
     } while (true);
 }

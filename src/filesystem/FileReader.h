@@ -21,6 +21,7 @@ namespace filesystem {
         std::string previousHash;
         std::string timestamp;
         std::string information;
+        bool visible;
     };
 
     class FileReader {

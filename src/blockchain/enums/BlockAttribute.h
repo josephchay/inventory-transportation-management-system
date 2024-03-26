@@ -15,6 +15,7 @@ namespace blockchain::enums {
         TIMESTAMP,
         BITS,
         INFORMATION,
+        VISIBLE,
     };
 
     class BlockAttributeUtils {

@@ -130,6 +130,8 @@ namespace filesystem {
                 currentBlock.timestamp = extractBlockData(line);
             } else if (line.find(BlockAttributeUtils::toString(BlockAttribute::INFORMATION) + ":") != std::string::npos) {
                 currentBlock.information = extractBlockData(line);
+            } else if (line.find(BlockAttributeUtils::toString(BlockAttribute::VISIBLE) + ":") != std::string::npos) {
+                currentBlock.visible = extractBlockData(line) == "true";
             }
         }
 

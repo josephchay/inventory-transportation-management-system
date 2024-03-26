@@ -9,6 +9,8 @@ namespace blockchain::enums {
      * @return
      */
     BlockType BlockTypeUtils::fromString(const std::string& typeString) {
+        // Convert the string to the corresponding BlockType
+        // (If else statements are used instead of switch-case because the enum class values are not continuous)
         if (typeString == "Supplier") {
             return BlockType::SUPPLIER;
         } else if (typeString == "Transporter") {

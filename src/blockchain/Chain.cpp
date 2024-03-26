@@ -6,9 +6,22 @@
 namespace blockchain {
     Chain::Chain(const int version, const std::string& bits) : version(version), bits(bits) {}
 
-    Chain& Chain::addBlock(std::unique_ptr<Block> block) {
+    Chain& Chain::addBlock(std::shared_ptr<Block> block) {
+        // Set the genesis flag for the block
         block->setGenesis(block->getHeight() == 0);
         blocks.push_back(std::move(block));
+
+        return *this;
+    }
+
+    Chain& Chain::removeBlock(std::shared_ptr<Block> blockToRemove) {
+        // The lambda captures blockToRemove by value since it's a shared_ptr
+        auto it = std::remove_if(blocks.begin(), blocks.end(),
+                                 [blockToRemove](const std::shared_ptr<Block>& block) {
+                                     return block == blockToRemove;
+                                 });
+
+        blocks.erase(it, blocks.end()); // Erase the specified block
 
         return *this;
     }
@@ -17,7 +30,7 @@ namespace blockchain {
         return blocks.empty();
     }
 
-    void Chain::display() const {
+    void Chain::displayAll() const {
         using namespace blockchain::enums; // Use the entire namespace
 
         std::cout << std::endl << "------------------------------------ BLOCKCHAIN ------------------------------------" << std::endl << std::endl;
@@ -27,8 +40,23 @@ namespace blockchain {
         std::cout << "------------------------------------------------------------------------------------" << std::endl << std::endl;
     }
 
-    void Chain::searchBlockByAttr(blockchain::enums::BlockAttribute attribute, const std::string& value) const {
-        std::vector<const Block*> foundBlocks; // Store pointers to the found blocks
+    void Chain::display(const std::vector<std::shared_ptr<Block>>& selectedBlocks) const {
+        if (!selectedBlocks.empty()) {
+            std::cout << "------------------------------------ SEARCH RESULTS (BLOCKS) ------------------------------------" << std::endl << std::endl;
+
+            for (const auto& block : selectedBlocks) {
+                displayBlockDetails(block);
+            }
+
+            std::cout << "------------------------------------------------------------------------------------" << std::endl << std::endl;
+        } else {
+            std::cout << "No blocks found matching the criteria." << std::endl << std::endl;
+        }
+    }
+
+
+    std::vector<std::shared_ptr<Block>> Chain::searchBlockByAttr(blockchain::enums::BlockAttribute attribute, const std::string& value) const {
+        std::vector<std::shared_ptr<Block>> foundBlocks; // Store shared pointers to the found blocks
 
         for (const auto& block : blocks) {
             bool found = false;
@@ -52,7 +80,7 @@ namespace blockchain {
                     found = attrValue == value;
                     break;
                 case blockchain::enums::BlockAttribute::HASH:
-                    attrValue = block->getCurrentHash();
+                    attrValue = block->getHash();
                     found = attrValue == value;
                     break;
                 case blockchain::enums::BlockAttribute::PREV_HASH:
@@ -80,32 +108,25 @@ namespace blockchain {
                     attrValue = block->getInformationString();
                     found = attrValue == value;
                     break;
+                case enums::BlockAttribute::VISIBLE:
+                    // Visibility not needed to be shown to the users
+                    break;
             }
 
             if (found) {
-                foundBlocks.push_back(block.get()); // Store pointer to the block
+                foundBlocks.push_back(block); // Directly use the shared_ptr from the blocks vector
             }
         }
 
-        if (!foundBlocks.empty()) {
-            std::cout << "------------------------------------ SEARCH RESULTS (BLOCKS) ------------------------------------" << std::endl << std::endl;
-
-            for (const auto* block : foundBlocks) {
-                displayBlockDetails(std::make_unique<Block>(*block));
-            }
-
-            std::cout << "------------------------------------------------------------------------------------" << std::endl << std::endl;
-        } else {
-            std::cout << "No blocks found matching the search criteria." << std::endl << std::endl;
-        }
+        return foundBlocks;
     }
 
-    void Chain::displayBlockDetails(const std::unique_ptr<Block> &block) const {
+    void Chain::displayBlockDetails(const std::shared_ptr<Block> &block) const {
         std::cout << enums::BlockAttributeUtils::toString(enums::BlockAttribute::TYPE) << " --> " << enums::BlockTypeUtils ::toString(block->getType()) << std::endl
                   << enums::BlockAttributeUtils::toString(enums::BlockAttribute::HEIGHT) << " --> " << block->getHeight() << (block->isGenesis() ? " (Genesis Block)" : "") << std::endl
                   << enums::BlockAttributeUtils::toString(enums::BlockAttribute::VERSION) << " --> " << version << std::endl
                   << enums::BlockAttributeUtils::toString(enums::BlockAttribute::NONCE) << " --> " << block->getNonce() << std::endl
-                  << enums::BlockAttributeUtils::toString(enums::BlockAttribute::HASH) << " --> " << block->getCurrentHash() << std::endl
+                  << enums::BlockAttributeUtils::toString(enums::BlockAttribute::HASH) << " --> " << block->getHash() << std::endl
                   << enums::BlockAttributeUtils::toString(enums::BlockAttribute::PREV_HASH) << " --> " << block->getPrevHash() << std::endl
                   << enums::BlockAttributeUtils::toString(enums::BlockAttribute::MERKLE_ROOT) << " --> " << block->getMerkleRoot() << std::endl
                   << enums::BlockAttributeUtils::toString(enums::BlockAttribute::TIMESTAMP) << " --> " << block->getTimestamp() << " (" + block->getFormattedTimestamp() + ")" << std::endl
@@ -129,7 +150,7 @@ namespace blockchain {
      */
     std::string Chain::getLastBlockHash() const {
         if (!blocks.empty()) {
-            return blocks.back()->getCurrentHash();
+            return blocks.back()->getHash();
         }
         return "0"; // Return a default hash for the genesis block
     }
@@ -149,12 +170,13 @@ namespace blockchain {
         writer.writeLine(BlockAttributeUtils::toString(BlockAttribute::HEIGHT) + ": " + std::to_string(block.getHeight()));
         writer.writeLine(BlockAttributeUtils::toString(BlockAttribute::VERSION) + ": " + std::to_string(version));
         writer.writeLine(BlockAttributeUtils::toString(BlockAttribute::NONCE) + ": " + std::to_string(block.getNonce()));
-        writer.writeLine(BlockAttributeUtils::toString(BlockAttribute::HASH) + ": " + block.getCurrentHash());
+        writer.writeLine(BlockAttributeUtils::toString(BlockAttribute::HASH) + ": " + block.getHash());
         writer.writeLine(BlockAttributeUtils::toString(BlockAttribute::PREV_HASH) + ": " + block.getPrevHash());
         writer.writeLine(BlockAttributeUtils::toString(BlockAttribute::MERKLE_ROOT) + ": " + block.getMerkleRoot());
         writer.writeLine(BlockAttributeUtils::toString(BlockAttribute::TIMESTAMP) + ": " + std::to_string(block.getTimestamp()));
         writer.writeLine(BlockAttributeUtils::toString(BlockAttribute::BITS) + ": " + bits);
         writer.writeLine(BlockAttributeUtils::toString(BlockAttribute::INFORMATION) + ": " + block.getInformationString());
+        writer.writeLine(BlockAttributeUtils::toString(BlockAttribute::VISIBLE) + ": " + (block.isVisible() ? "true" : "false"));
         writer.writeLine(""); // Add an empty line for readability
     }
 
