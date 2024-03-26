@@ -2,7 +2,7 @@
 
 namespace blockchain {
     TransporterBlock::TransporterBlock(const int version, const std::string bits, int height, const std::string& previousHash, const TransporterInfo& info, int nonce, const std::string& currentHash)
-            : Block(version, bits, height, previousHash, formatTransporterInfo(info), "Transporter", nonce, currentHash), info(info) {
+            : Block(version, bits, height, previousHash, formatTransporterInfo(info), blockchain::enums::BlockType::TRANSPORTER, nonce, currentHash), info(info) {
         // No additional initialization needed here
     }
 

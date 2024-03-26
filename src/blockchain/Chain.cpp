@@ -19,20 +19,20 @@ namespace blockchain {
     }
 
     void Chain::displayBlockchain() const {
-        std::cout << std::endl << "------------------- BLOCKCHAIN INFORMATION -------------------" << std::endl << std::endl;
+        std::cout << std::endl << "------------------------------- BLOCKCHAIN -------------------------------" << std::endl << std::endl;
         for (const auto& block : blocks) {
-            std::cout << "Block Type --> " << block->getType() << std::endl
+            std::cout << "Block Type --> " << blockchain::enums::toString(block->getType()) << std::endl
                       << "Height --> " << block->getHeight() << (block->isGenesis() ? " (Genesis Block)" : "") << std::endl
                       << "Version --> " << VERSION << std::endl
                       << "Nonce --> " << block->getNonce() << std::endl
                       << "Current Hash --> " << block->getCurrentHash() << std::endl
                       << "Previous Hash --> " << block->getPrevHash() << std::endl
                       << "Merkle Root --> " << block->getMerkleRoot() << std::endl
-                      << "Timestamp --> " << block->getFormattedTimestamp() << std::endl
+                      << "Timestamp --> " << block->getTimestamp() << " (" + block->getFormattedTimestamp() + ")" << std::endl
                       << "Bits --> " << bits << std::endl
                       << "Information --> " << "[ " << block->getInformationString() << " ]" << std::endl << std::endl;
         }
-        std::cout << "---------------- END OF BLOCKCHAIN INFORMATION ----------------" << std::endl << std::endl;
+        std::cout << "--------------------------------------------------------------------------" << std::endl << std::endl;
     }
 
     int Chain::getNextBlockHeight() const {
@@ -48,7 +48,8 @@ namespace blockchain {
 
     void Chain::logBlockDetails(const Block& block, const std::string& filename) {
         filesystem::FileWriter writer(filename);
-        writer.writeLine("Block Type: " + block.getType());
+
+        writer.writeLine("Block Type: " + blockchain::enums::toString(block.getType()));
         writer.writeLine("Height: " + std::to_string(block.getHeight()));
         writer.writeLine("Version: " + std::to_string(VERSION));
         writer.writeLine("Nonce: " + std::to_string(block.getNonce()));

@@ -7,11 +7,12 @@
 #include <sstream>
 #include <iomanip>
 #include "BlockHeader.h"
+#include "enums/BlockType.h"
 
 namespace blockchain {
     class Block {
     public:
-        [[nodiscard]] std::string getType() const;
+        [[nodiscard]] blockchain::enums::BlockType getType() const;
         [[nodiscard]] int getHeight() const;
         [[nodiscard]] int getNonce() const;
         [[nodiscard]] std::string getCurrentHash() const;
@@ -25,11 +26,11 @@ namespace blockchain {
         void setGenesis(bool genesisValue);
 
     protected:
-        std::string type;
+        blockchain::enums::BlockType type;
         int height;
         blockchain::BlockHeader header;
         bool genesis = false;
 
-        Block(const int version, const std::string bits, int height, const std::string& previousHash, const std::string& information, const std::string& blockType, int nonce = 0, const std::string& currentHash = "");
+        Block(const int version, const std::string bits, int height, const std::string& previousHash, const std::string& information, blockchain::enums::BlockType type, int nonce = 0, const std::string& currentHash = "");
     };
 } // namespace blockchain

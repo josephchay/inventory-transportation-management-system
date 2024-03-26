@@ -1,9 +1,13 @@
-// BlockType.cpp
 #include "BlockType.h"
 #include <stdexcept>
 
 namespace blockchain::enums {
-    // Function definition
+    /**
+     * @brief Convert string to BlockType
+     *
+     * @param typeString
+     * @return
+     */
     BlockType fromString(const std::string& typeString) {
         if (typeString == "Supplier") {
             return BlockType::SUPPLIER;
@@ -13,6 +17,25 @@ namespace blockchain::enums {
             return BlockType::TRANSACTION;
         } else {
             throw std::invalid_argument("Unknown BlockType string: " + typeString);
+        }
+    }
+
+    /**
+     * @brief Convert BlockType to string
+     *
+     * @param type
+     * @return
+     */
+    std::string toString(BlockType type) {
+        switch (type) {
+            case BlockType::SUPPLIER:
+                return "Supplier";
+            case BlockType::TRANSPORTER:
+                return "Transporter";
+            case BlockType::TRANSACTION:
+                return "Transaction";
+            default:
+                throw std::invalid_argument("Unknown BlockType");
         }
     }
 }

@@ -4,11 +4,13 @@
 #include <ctime>
 #include <cstdint>
 #include <vector>
+#include <functional>
+#include "enums/BlockType.h"
 
 namespace blockchain {
     class BlockHeader {
     public:
-        BlockHeader(const int version, const std::string bits, const std::string& informationString, int nonce = 0, const std::string& hash = "", const std::string& previousHash = "");
+        BlockHeader(blockchain::enums::BlockType type, const int version, const std::string bits, const std::string& informationString, int nonce = 0, const std::string& hash = "", const std::string& previousHash = "");
 
         // setters
         void setHash(const std::string& hash);
@@ -40,6 +42,6 @@ namespace blockchain {
         std::string informationString;
         int nonce;
 
-        std::string mine();
+        std::string mine(std::function<std::string(std::string)>);
     };
 } // namespace blockchain

@@ -203,6 +203,25 @@ namespace collection::validation {
         return ""; // Return an empty string or handle this case as needed
     }
 
+    int InputValidator::validateSelectionIndex(const std::string& topic, const std::vector<std::string>& options) {
+        // Use validateSelection to get the selected option
+        std::string selectedOption = validateSelection(topic, options);
+
+        // Check if the user has decided to exit
+        if (selectedOption.empty() || isExitCommand(selectedOption)) {
+            return -1; // or any other indicator that user exited or invalid selection was made
+        }
+
+        // Find the index of the selected option
+        auto it = std::find(options.begin(), options.end(), selectedOption);
+        if (it != options.end()) {
+            return std::distance(options.begin(), it); // Return the index of the selected option
+        }
+
+        // In case something goes wrong and the selected option is not found (which shouldn't happen)
+        return -1;
+    }
+
     bool InputValidator::validateConfirm(const std::string& topic) {
         std::string input;
         // Loop until a valid response is received

@@ -6,6 +6,7 @@
 #include "collection/InputCollector.h"
 #include "filesystem/FileReader.h"
 #include "collection/conversion/DataConverter.h"
+#include "collection/validator/InputValidator.h"
 
 int main() {
     srand(static_cast<unsigned int>(time(0))); // Seed for random number generation
@@ -55,47 +56,47 @@ int main() {
             }
     };
 
-    int index = 0; // Default to Supplier if no blocks were added or if the last block was Transaction
-    if (lastBlockType == blockchain::enums::BlockType::SUPPLIER) {
-        index = 1; // Next should be Transporter
-    } else if (lastBlockType == blockchain::enums::BlockType::TRANSPORTER) {
-        index = 2; // Next should be Transaction
+    int index; // Default to Supplier if no blocks were added or if the last block was Transaction
+
+    switch (lastBlockType) {
+        case blockchain::enums::BlockType::SUPPLIER:
+            index = 1; // Next should be Transporter
+            break;
+        case blockchain::enums::BlockType::TRANSPORTER:
+            index = 2; // Next should be Transaction
+            break;
+        case blockchain::enums::BlockType::TRANSACTION:
+        default:
+            index = 0; // Default to Supplier if the last block was Transaction or no blocks were added
+            break;
     }
 
     std::string continueInput;
+    std::vector<std::string> actionOptions = {
+        "Display blockchain",
+        "Search Block",
+        "Add Block",
+    };
+
+    std::cout << "Enter values based on the given options or 'q'/'quit' to exit the program anytime." << std::endl << std::endl;
 
     do {
-        if (blockchain.isEmpty()) {
-            std::cout << "Blockchain is fresh. Start adding blocks." << std::endl << std::endl;
-        } else {
-            blockchain.displayBlockchain();
-        }
+        int action = collection::validation::InputValidator::validateSelectionIndex("an action", actionOptions);
 
-        std::cout << "Enter values based on the given options or 'q'/'quit' to exit the program anytime." << std::endl << std::endl;
-
-        // Call the function corresponding to the current index
-        functions[index]();
-
-        // Move to the next type of block or loop back to the start
-        index = (index + 1) % functions.size();
-
-        bool validInput = false;
-        while (!validInput) {
-            std::cout << "Proceed to add next block? (Enter 'continue' to add or 'q'/'quit' to exit): ";
-            std::cin >> continueInput;
-            std::cin.ignore();
-            std::cout << std::endl;
-
-            if (continueInput == "q" || continueInput == "quit") {
-                std::cout << "-------------------- RECORDED CHAIN ---------------------";
-                blockchain.displayBlockchain();
-                return 0;
-            } else if (continueInput == "continue" || continueInput == "CONTINUE") {
-                validInput = true; // Valid input to continue, break out of the inner loop
+        if (action == 0) {
+            if (blockchain.isEmpty()) {
+                std::cout << "No blocks found in the blockchain." << std::endl << std::endl;
             } else {
-                std::cout << "Invalid input. Please enter 'continue' to add another block or 'q'/'quit' to exit.\n";
-                // The loop will continue, asking for input again
+                blockchain.displayBlockchain();
             }
+        } else if (action == 1) {
+
+        } else if (action == 2) {
+            // Call the function at the current index
+            functions[index]();
+
+            // Move to the next type of block or loop back to the start
+            index = (index + 1) % functions.size();
         }
-    } while (true); // The loop condition is now handled internally, making the outer condition unnecessary
+    } while (true);
 }

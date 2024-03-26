@@ -5,7 +5,7 @@
 #include <set>
 #include <vector>
 #include <regex>
-#include "../blockchain/enums/BlockType.cpp"
+#include "../blockchain/enums/BlockType.h"
 
 namespace filesystem {
     enum class DataType {

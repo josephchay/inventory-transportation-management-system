@@ -1,4 +1,3 @@
-// BlockType.h
 #ifndef BLOCKTYPE_H
 #define BLOCKTYPE_H
 
@@ -11,7 +10,8 @@ namespace blockchain::enums {
         TRANSACTION,
     };
 
-    static BlockType fromString(const std::string& typeString);
+    BlockType fromString(const std::string& typeString);
+    std::string toString(BlockType type);
 } // namespace blockchain
 
 #endif // BLOCKTYPE_H

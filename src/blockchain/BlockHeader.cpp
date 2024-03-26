@@ -1,6 +1,8 @@
 #include "BlockHeader.h"
 #include "../../libs/sha256/sha256.h"
 #include "../utils/Datetime.h"
+#include "../../libs/sha384/sha384.h"
+#include "../../libs/sha512/sha512.h"
 #include <random>
 #include <algorithm>
 #include <iostream>
@@ -39,7 +41,20 @@ namespace blockchain {
         }
     }
 
-    BlockHeader::BlockHeader(const int version, const std::string bits, const std::string& informationString, int nonce, const std::string& currentHash, const std::string& previousHash)
+    std::function<std::string(std::string)> getHashFunction(blockchain::enums::BlockType type) {
+        switch (type) {
+            case blockchain::enums::BlockType::SUPPLIER:
+                return sha256;
+            case blockchain::enums::BlockType::TRANSPORTER:
+                return sha384;
+            case blockchain::enums::BlockType::TRANSACTION:
+                return sha512;
+            default:
+                return sha256;
+        }
+    }
+
+    BlockHeader::BlockHeader(blockchain::enums::BlockType type, const int version, const std::string bits, const std::string& informationString, int nonce, const std::string& currentHash, const std::string& previousHash)
             : version(version), bits(bits), informationString(informationString) {
         // Initialize timestamp with the current date and time
         std::time_t currentTime = std::time(nullptr);
@@ -51,7 +66,7 @@ namespace blockchain {
         this->merkleRoot = sha256(informationString);
 
         if (currentHash.empty()) {
-            this->hash = mine();
+            this->hash = mine(getHashFunction(type));
         } else {
             this->hash = currentHash;
             this->nonce = nonce;
@@ -63,7 +78,7 @@ namespace blockchain {
         }
     }
 
-    std::string BlockHeader::mine() {
+    std::string BlockHeader::mine(std::function<std::string(std::string)> hashFunction) {
         // Target defined for a hash to start with "0000", so first 2 bytes should be zero
         std::vector<uint8_t> targetPrefix = {0x00, 0x00};
 
@@ -88,8 +103,9 @@ namespace blockchain {
 
             // Convert blockHeader to a string for SHA256 hashing
             std::string blockHeaderStr(blockHeader.begin(), blockHeader.end());
-            // Hash the block header using SHA256
-            currentHashHex = sha256(blockHeaderStr);
+
+            // Hash the block header using the provided hash function
+            currentHashHex = hashFunction(blockHeaderStr);
 
             // Convert the current hash back to bytes for comparison
             std::vector<uint8_t> currentHashBytes = hexStringToBytes(currentHashHex);

@@ -15,6 +15,7 @@ namespace collection::validation {
         static std::string validateTimeString(const std::string& topic);
         std::string validateCurrencyInput(const std::string& topic);
         static std::string validateSelection(const std::string& topic, const std::vector<std::string>& options);
+        static int validateSelectionIndex(const std::string& topic, const std::vector<std::string>& options);
         static bool validateConfirm(const std::string& topic);
         static bool validateConfirmValue(const std::string& topic, const std::string& value);
         static std::string validateUniqueIdInt(const std::string& topic, const std::vector<int>& existingValues);
