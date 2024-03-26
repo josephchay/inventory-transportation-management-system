@@ -6,9 +6,8 @@ namespace blockchain {
             : height(height), type(type), header(type, version, bits, information, nonce, currentHash, previousHash), visible(visible) {
     }
 
-    void Block::setGenesis(bool genesisValue) {
-        genesis = genesisValue;
-    }
+    void Block::setGenesis(bool genesisValue) { genesis = genesisValue; }
+    void Block::setVisible(bool visibility) { visible = visibility; }
 
     // Getter methods
     blockchain::enums::BlockType Block::getType() const { return type; }

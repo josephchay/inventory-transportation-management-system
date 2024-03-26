@@ -97,12 +97,8 @@ namespace collection {
     }
 
     std::pair<blockchain::enums::BlockAttribute, std::string> Prompt::collectSearchCriteria(const std::vector<std::string>& searchOptions, const std::string& topic) {
-        if (!topic.empty()) {
-            std::cout << topic << std::endl << std::endl;
-        }
-
-        int searchByAttr = collection::validation::InputValidator::validateSelectionInt("an attribute to search by", searchOptions);
-        std::string searchValue = collection::validation::InputValidator::validateString("a value to search for");
+        int searchByAttr = collection::validation::InputValidator::validateSelectionInt("an attribute to " + topic + " by", searchOptions);
+        std::string searchValue = collection::validation::InputValidator::validateString("a value to " + topic + " for");
 
         return std::make_pair(static_cast<blockchain::enums::BlockAttribute>(searchByAttr - 1), searchValue);
     }
@@ -119,15 +115,15 @@ namespace collection {
 
             std::vector<std::shared_ptr<blockchain::Block>> foundBlocks;
             do {
-                auto [searchAttr, searchValue] = collection::Prompt::collectSearchCriteria(searchOptions, std::string("Search for the block to ") + (delType == 1 ? "soft delete." : "hard delete."));
+                auto [searchAttr, searchValue] = collection::Prompt::collectSearchCriteria(searchOptions, (delType == 1 ? "soft delete" : "hard delete"));
                 foundBlocks = blockchain.searchBlockByAttr(searchAttr, searchValue);
 
                 if (foundBlocks.size() > 1) {
-                    std::cout << foundBlocks.size() << " blocks matching the criteria found. Manipulate one block at a time!" << std::endl;
+                    std::cout << foundBlocks.size() << " blocks matching the criteria found. Manipulate one block at a time!" << std::endl << std::endl;
                 }
             } while (foundBlocks.size() > 1);
 
-            redactedBlockchain.removeBlock(foundBlocks[0]);
+            redactedBlockchain.hideBlock(foundBlocks[0]);
             if (delType == 2) {
                 blockchain.removeBlock(foundBlocks[0]);
             }

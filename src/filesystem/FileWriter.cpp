@@ -115,4 +115,15 @@ namespace filesystem {
 
         return modifiedLine;
     }
+
+    void FileWriter::clearFile(const std::string& filePath) {
+        // Open the file with ios::out and ios::trunc flags to clear its contents
+        std::ofstream file(filePath, std::ios::out | std::ios::trunc);
+
+        if (!file.is_open()) {
+            std::cerr << "Failed to open file for clearing: " << filePath << std::endl;
+        } else {
+            file.close(); // Close the file after clearing its contents
+        }
+    }
 }

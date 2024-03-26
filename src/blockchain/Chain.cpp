@@ -4,7 +4,7 @@
 #include <iostream>
 
 namespace blockchain {
-    Chain::Chain(const int version, const std::string& bits) : version(version), bits(bits) {}
+    Chain::Chain(const std::string dataFilePath, const int version, const std::string& bits) : dataFilePath(dataFilePath), version(version), bits(bits) {}
 
     Chain& Chain::addBlock(std::shared_ptr<Block> block) {
         // Set the genesis flag for the block
@@ -14,14 +14,30 @@ namespace blockchain {
         return *this;
     }
 
-    Chain& Chain::removeBlock(std::shared_ptr<Block> blockToRemove) {
-        // The lambda captures blockToRemove by value since it's a shared_ptr
+    Chain& Chain::hideBlock(std::shared_ptr<Block> block) {
+        // The lambda captures block by value since it's a shared_ptr
         auto it = std::remove_if(blocks.begin(), blocks.end(),
-                                 [blockToRemove](const std::shared_ptr<Block>& block) {
-                                     return block == blockToRemove;
+                                 [block](const std::shared_ptr<Block>& itBlock) {
+                                     return itBlock == block;
                                  });
 
         blocks.erase(it, blocks.end()); // Erase the specified block
+
+        return *this;
+    }
+
+    Chain& Chain::removeBlock(std::shared_ptr<Block> blockToHide) {
+        // The lambda captures blockToHide by value since it's a shared_ptr
+        auto it = std::find(blocks.begin(), blocks.end(), blockToHide);
+
+        if (it != blocks.end()) {
+            (*it)->setVisible(false);
+        }
+
+        filesystem::FileWriter::clearFile(dataFilePath); // Clear the file before writing the updated data
+        for (const auto& block : blocks) {
+            logBlockDetails(*block, dataFilePath);
+        }
 
         return *this;
     }
@@ -31,21 +47,27 @@ namespace blockchain {
     }
 
     void Chain::displayAll() const {
-        using namespace blockchain::enums; // Use the entire namespace
-
-        std::cout << std::endl << "------------------------------------ BLOCKCHAIN ------------------------------------" << std::endl << std::endl;
-        for (const auto& block : blocks) {
-            displayBlockDetails(block);
+        if (hasVisibleBlocks(blocks)) {
+            std::cout << std::endl << "------------------------------------ BLOCKCHAIN ------------------------------------" << std::endl << std::endl;
+            for (const auto& block : blocks) {
+                if (block->isVisible()) {
+                    displayBlockDetails(block);
+                }
+            }
+            std::cout << "------------------------------------------------------------------------------------" << std::endl << std::endl;
+        } else {
+            std::cout << "No blocks found in the blockchain." << std::endl << std::endl;
         }
-        std::cout << "------------------------------------------------------------------------------------" << std::endl << std::endl;
     }
 
     void Chain::display(const std::vector<std::shared_ptr<Block>>& selectedBlocks) const {
-        if (!selectedBlocks.empty()) {
-            std::cout << "------------------------------------ SEARCH RESULTS (BLOCKS) ------------------------------------" << std::endl << std::endl;
+        if (!selectedBlocks.empty() && hasVisibleBlocks(selectedBlocks)) {
+            std::cout << "------------------------------------ SELECTED BLOCKS ------------------------------------" << std::endl << std::endl;
 
             for (const auto& block : selectedBlocks) {
-                displayBlockDetails(block);
+                if (block->isVisible()) {
+                    displayBlockDetails(block);
+                }
             }
 
             std::cout << "------------------------------------------------------------------------------------" << std::endl << std::endl;
@@ -54,6 +76,11 @@ namespace blockchain {
         }
     }
 
+    bool Chain::hasVisibleBlocks(const std::vector<std::shared_ptr<Block>>& blocks) const {
+        return std::any_of(blocks.begin(), blocks.end(), [](const std::shared_ptr<Block>& block) {
+            return block->isVisible();
+        });
+    }
 
     std::vector<std::shared_ptr<Block>> Chain::searchBlockByAttr(blockchain::enums::BlockAttribute attribute, const std::string& value) const {
         std::vector<std::shared_ptr<Block>> foundBlocks; // Store shared pointers to the found blocks
@@ -180,10 +207,10 @@ namespace blockchain {
         writer.writeLine(""); // Add an empty line for readability
     }
 
-    void Chain::addToRecord(const std::string& filename) {
+    void Chain::addToRecord() {
         if (!blocks.empty()) {
             const auto& block = blocks.back();
-            logBlockDetails(*block, filename);
+            logBlockDetails(*block, dataFilePath);
         }
     }
 }

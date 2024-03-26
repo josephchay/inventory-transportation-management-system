@@ -12,7 +12,7 @@ namespace collection {
         static blockchain::SupplierInfo collectSupplierInfo(const std::string& optionsFilePath);
         static blockchain::TransporterInfo collectTransporterInfo(const std::string& optionsFilePath);
         static blockchain::TransactionInfo collectTransactionInfo(const std::string& optionsFilePath, const std::string& recordsFilePath);
-        static std::pair<blockchain::enums::BlockAttribute, std::string> collectSearchCriteria(const std::vector<std::string>& searchOptions, const std::string& topic = "");
+        static std::pair<blockchain::enums::BlockAttribute, std::string> collectSearchCriteria(const std::vector<std::string>& searchOptions, const std::string& topic = "search");
         static void collectBlockManipulationCriteria(blockchain::Chain& blockchain, blockchain::Chain& redactedBlockchain, const std::vector<std::string>& searchOptions);
     };
 }

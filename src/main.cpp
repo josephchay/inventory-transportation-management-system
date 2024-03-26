@@ -15,16 +15,16 @@ int main() {
     /**
      * @brief The chain of blocks where all blocks are from the real data blockchain record.
      */
-    blockchain::Chain blockchain(data::Config::VERSION);
+    blockchain::Chain blockchain(data::Config::RECORDS_BLOCKCHAIN_FILE_PATH, data::Config::VERSION);
 
     /**
      * @brief The chain of blocks where some blocks are hidden (redacted) from the display view output to the user.
      * aka. The temporary storage of the blockchain data.
      */
-    blockchain::Chain redactedBlockchain(data::Config::VERSION);
+    blockchain::Chain redactedBlockchain(data::Config::RECORDS_BLOCKCHAIN_FILE_PATH, data::Config::VERSION);
 
     // Initialize FileReader and read the block data
-    filesystem::FileReader fileReader(R"(../data/records/chain.txt)", filesystem::DataType::CHAIN);
+    filesystem::FileReader fileReader(data::Config::RECORDS_BLOCKCHAIN_FILE_PATH, filesystem::DataType::CHAIN);
     const auto& blocks = fileReader.getBlocks();
 
     blockchain::enums::BlockType lastBlockType = blockchain::enums::BlockType::TRANSACTION; // Default to Transaction if no blocks were added
@@ -53,21 +53,21 @@ int main() {
     // Function vector to cycle through, using the Prompt class for data collection
     std::vector<std::function<void()>> functions = {
             [&]{
-                auto info = collection::Prompt::collectSupplierInfo(R"(../data/options/suppliers.txt)");
+                auto info = collection::Prompt::collectSupplierInfo(data::Config::OPTIONS_SUPPLIER_FILE_PATH);
                 auto block = std::make_shared<blockchain::SupplierBlock>(data::Config::VERSION, blockchain.getBits(), blockchain.getNextBlockHeight(), blockchain.getLastBlockHash(), info);
-                blockchain.addBlock(block).addToRecord(R"(../data/records/chain.txt)");
+                blockchain.addBlock(block).addToRecord();
                 redactedBlockchain.addBlock(block);
             },
             [&]{
-                auto info = collection::Prompt::collectTransporterInfo(R"(../data/options/transporters.txt)");
+                auto info = collection::Prompt::collectTransporterInfo(data::Config::OPTIONS_TRANSPORTER_FILE_PATH);
                 auto block = std::make_shared<blockchain::TransporterBlock>(data::Config::VERSION, blockchain.getBits(), blockchain.getNextBlockHeight(), blockchain.getLastBlockHash(), info);
-                blockchain.addBlock(block).addToRecord(R"(../data/records/chain.txt)");
+                blockchain.addBlock(block).addToRecord();
                 redactedBlockchain.addBlock(block);
             },
             [&]{
-                auto info = collection::Prompt::collectTransactionInfo(R"(../data/options/transactions.txt)", R"(../data/records/chain.txt)");
+                auto info = collection::Prompt::collectTransactionInfo(data::Config::OPTIONS_TRANSACTION_FILE_PATH, data::Config::RECORDS_BLOCKCHAIN_FILE_PATH);
                 auto block = std::make_shared<blockchain::TransactionBlock>(data::Config::VERSION, blockchain.getBits(), blockchain.getNextBlockHeight(), blockchain.getLastBlockHash(), info);
-                blockchain.addBlock(block).addToRecord(R"(../data/records/chain.txt)");
+                blockchain.addBlock(block).addToRecord();
                 redactedBlockchain.addBlock(block);
             }
     };

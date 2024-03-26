@@ -25,6 +25,7 @@ namespace blockchain {
         [[nodiscard]] bool isVisible() const;
 
         void setGenesis(bool genesisValue);
+        void setVisible(bool visibility);
 
     protected:
         blockchain::enums::BlockType type;

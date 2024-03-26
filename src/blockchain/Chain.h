@@ -13,7 +13,7 @@ namespace blockchain {
          */
         static const int VERSION;
 
-        Chain(const int version, const std::string& bits = "ffff001f");
+        Chain(const std::string dataFilePath, const int version, const std::string& bits = "ffff001f");
 
         Chain& addBlock(std::shared_ptr<Block> block);
 
@@ -24,7 +24,16 @@ namespace blockchain {
          * @param block
          * @return
          */
-        Chain& removeBlock(std::shared_ptr<Block> blockToRemove);
+        Chain& hideBlock(std::shared_ptr<Block> block);
+
+        /**
+         * @brief "Removes" a block from the blockchain by flagging it as invisible.
+         * The block still remains in the blockchain data record due to immutability but will not be displayed.
+         *
+         * @param blockToHide
+         * @return
+         */
+        Chain& removeBlock(std::shared_ptr<Block> blockToHide);
         void displayAll() const;
         void display(const std::vector<std::shared_ptr<Block>>& selectedBlocks) const;
 
@@ -32,11 +41,12 @@ namespace blockchain {
         [[nodiscard]] int getNextBlockHeight() const;
         [[nodiscard]] std::string getLastBlockHash() const;
         [[nodiscard]] bool isEmpty() const;
-        void addToRecord(const std::string& filename);
+        void addToRecord();
 
         [[nodiscard]] std::string getBits() const { return bits; }
 
     private:
+        const std::string dataFilePath;
         int version;
         std::string bits;
 
@@ -44,5 +54,6 @@ namespace blockchain {
         void logBlockDetails(const Block& block, const std::string& filename);
 
         void displayBlockDetails(const std::shared_ptr<Block> &block) const;
+        bool hasVisibleBlocks(const std::vector<std::shared_ptr<Block>>& blocks) const;
     };
 }

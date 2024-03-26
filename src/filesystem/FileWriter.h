@@ -11,6 +11,7 @@ namespace filesystem {
         ~FileWriter();
         void writeLine(const std::string& line);
         static void modifyCell(const std::string& filePath, int rowNum, int colNum, const std::string& newValue);
+        static void clearFile(const std::string& filePath);
 
     private:
         std::ofstream outputFile;
