@@ -1,0 +1,44 @@
+Block Type: Supplier
+Height: 0
+Version: 1
+Nonce: 5718
+Current Hash: 0000ba7f3aef3bf813ea625b952ae313aad16e19c0e38f3e04042febaa24752b
+Previous Hash: 0000ba7f3aef3bf813ea625b952ae313aad16e19c0e38f3e04042febaa24752b
+Merkle Root: 27cebdd4c4dd2315e4ba81223a5ea6c2e2d43d3532bce381f0acdd38381634ed
+Timestamp: 1711431169
+Bits: ffff001f
+Information: ID: 41673 | Name: First Stop All-In-One Supplies | Location: HELOOOOOO COMPANY | Branch: Klang
+
+Block Type: Transporter
+Height: 1
+Version: 1
+Nonce: 166014
+Current Hash: 00002c8e614c1351dddb60916e6653780744e26bedaa789c41ea603eefed402d1408b47b61bc70959070ad42fcecd93e
+Previous Hash: 0000ba7f3aef3bf813ea625b952ae313aad16e19c0e38f3e04042febaa24752b
+Merkle Root: f9c7a2633e9783a2bdc6fc9d7562100ec097e8e0ef14d0cf322c34f43bfad31b
+Timestamp: 1711443442
+Bits: ffff001f
+Information: ID: 62945 | Name: SpeedyShip Logistics Services | Product Type: Cardboard Box | Transportation Type: National Delivery | Ordering Type: bulk orders | Ordering Amount (Kg): 10
+
+Block Type: Transaction
+Height: 2
+Version: 1
+Nonce: 29354
+Current Hash: 00000d7864cce93153f1d0990032ea83d5e8bbb92a2354791de8856575d3f926b298934f0dff46f973d59bb79697436dc82993f73899daa8d870cb3dbb3204b6
+Previous Hash: 00002c8e614c1351dddb60916e6653780744e26bedaa789c41ea603eefed402d1408b47b61bc70959070ad42fcecd93e
+Merkle Root: 490775d9210eba5d77d524307afc98034367c3c9cfd189fde1024163947ae594
+Timestamp: 1711443626
+Bits: ffff001f
+Information: ID: 10 | Retailer Per-Trip Credit Balance (RM): 20 | Annual Ordering Credit Balance (RM): 30 | Payment Type: Auto-deduction | Product Ordering Limit: (area (sqft)) 3
+
+Block Type: Supplier
+Height: 3
+Version: 1
+Nonce: 1929
+Current Hash: 0000fe9f3e4454bd6d6ed91fa383c4a72a190f1421f8fab1003f73cafd0c2c21
+Previous Hash: 00000d7864cce93153f1d0990032ea83d5e8bbb92a2354791de8856575d3f926b298934f0dff46f973d59bb79697436dc82993f73899daa8d870cb3dbb3204b6
+Merkle Root: ff6db459c1e973f0f203008e1501070f414f27bc045253ebfdc7e2d6947b8095
+Timestamp: 1711443655
+Bits: ffff001f
+Information: ID: 32141 | Name: The Local Supply Depot | Location: Jalan SS15/4G, Subang Jaya, Selangor | Branch: Subang Jaya
+

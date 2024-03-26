@@ -57,9 +57,8 @@ namespace blockchain {
     BlockHeader::BlockHeader(blockchain::enums::BlockType type, const int version, const std::string bits, const std::string& informationString, int nonce, const std::string& currentHash, const std::string& previousHash)
             : version(version), bits(bits), informationString(informationString) {
         // Initialize timestamp with the current date and time
-        std::time_t currentTime = std::time(nullptr);
-        this->timestamp = currentTime;
-        this->formattedTimestamp = utils::Datetime::formatTimestamp(currentTime);
+        this->timestamp = std::time(nullptr); // Current time
+        this->formattedTimestamp = utils::Datetime::formatTimestamp(this->timestamp);
 
         // For a genesis block, set the previous block hash to initially 64 zeros
         this->previousHash = previousHash.empty() || previousHash == "0" ? std::string(64, '0') : previousHash;
@@ -138,7 +137,6 @@ namespace blockchain {
     std::string BlockHeader::getMerkleRoot() const { return merkleRoot; }
     time_t BlockHeader::getTimestamp() const { return timestamp; }
     std::string BlockHeader::getFormattedTimestamp() const { return formattedTimestamp; }
-    std::string BlockHeader::getBits() const { return bits; }
     std::string BlockHeader::getInformationString() const { return informationString; }
     int BlockHeader::getNonce() const { return nonce; }
 } // namespace blockchain

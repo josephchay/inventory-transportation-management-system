@@ -8,7 +8,7 @@ namespace blockchain::enums {
      * @param typeString
      * @return
      */
-    BlockType fromString(const std::string& typeString) {
+    BlockType BlockTypeUtils::fromString(const std::string& typeString) {
         if (typeString == "Supplier") {
             return BlockType::SUPPLIER;
         } else if (typeString == "Transporter") {
@@ -26,7 +26,7 @@ namespace blockchain::enums {
      * @param type
      * @return
      */
-    std::string toString(BlockType type) {
+    std::string BlockTypeUtils::toString(BlockType type) {
         switch (type) {
             case BlockType::SUPPLIER:
                 return "Supplier";

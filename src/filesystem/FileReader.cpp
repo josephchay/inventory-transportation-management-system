@@ -1,4 +1,5 @@
 #include "FileReader.h"
+#include "../blockchain/enums/BlockAttribute.h"
 #include <fstream>
 #include <sstream>
 #include <algorithm>
@@ -97,6 +98,8 @@ namespace filesystem {
     }
 
     void FileReader::parseChainFile(const std::string& filePath) {
+        using namespace blockchain::enums;
+
         std::ifstream file(filePath);
         if (!file.is_open()) {
             throw std::runtime_error("Failed to open file: " + filePath);
@@ -107,25 +110,25 @@ namespace filesystem {
         bool blockStarted = false;
 
         while (getline(file, line)) {
-            if (line.find("Block Type:") != std::string::npos) {
+            if (line.find(BlockAttributeUtils::toString(BlockAttribute::TYPE) + ":") != std::string::npos) {
                 if (blockStarted) {
                     // Save the previous block before starting a new one
                     blocks.push_back(currentBlock);
                     currentBlock = BlockInfo(); // Reset for next block
                 }
-                currentBlock.type = blockchain::enums::fromString(extractBlockData(line));
+                currentBlock.type = blockchain::enums::BlockTypeUtils::fromString(extractBlockData(line));
                 blockStarted = true;
-            } else if (line.find("Height:") != std::string::npos) {
+            } else if (line.find(BlockAttributeUtils::toString(BlockAttribute::HEIGHT)+ ":") != std::string::npos) {
                 currentBlock.height = std::stoi(extractBlockData(line));
-            } else if (line.find("Nonce:") != std::string::npos) {
+            } else if (line.find(BlockAttributeUtils::toString(BlockAttribute::NONCE) + ":") != std::string::npos) {
                 currentBlock.nonce = std::stoi(extractBlockData(line));
-            } else if (line.find("Current Hash:") != std::string::npos) {
+            } else if (line.find(BlockAttributeUtils::toString(BlockAttribute::HASH) + ":") != std::string::npos) {
                 currentBlock.currentHash = extractBlockData(line);
-            } else if (line.find("Previous Hash:") != std::string::npos) {
+            } else if (line.find(BlockAttributeUtils::toString(BlockAttribute::PREV_HASH) + ":") != std::string::npos) {
                 currentBlock.previousHash = extractBlockData(line);
-            } else if (line.find("Timestamp:") != std::string::npos) {
+            } else if (line.find(BlockAttributeUtils::toString(BlockAttribute::TIMESTAMP) + ":") != std::string::npos) {
                 currentBlock.timestamp = extractBlockData(line);
-            } else if (line.find("Information:") != std::string::npos) {
+            } else if (line.find(BlockAttributeUtils::toString(BlockAttribute::INFORMATION) + ":") != std::string::npos) {
                 currentBlock.information = extractBlockData(line);
             }
         }

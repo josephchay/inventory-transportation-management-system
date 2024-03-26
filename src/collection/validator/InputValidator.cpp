@@ -203,7 +203,7 @@ namespace collection::validation {
         return ""; // Return an empty string or handle this case as needed
     }
 
-    int InputValidator::validateSelectionIndex(const std::string& topic, const std::vector<std::string>& options) {
+    int InputValidator::validateSelectionInt(const std::string& topic, const std::vector<std::string>& options) {
         // Use validateSelection to get the selected option
         std::string selectedOption = validateSelection(topic, options);
 
@@ -215,7 +215,7 @@ namespace collection::validation {
         // Find the index of the selected option
         auto it = std::find(options.begin(), options.end(), selectedOption);
         if (it != options.end()) {
-            return std::distance(options.begin(), it); // Return the index of the selected option
+            return std::distance(options.begin(), it) + 1; // Add 1 to convert from 0-based to 1-based index
         }
 
         // In case something goes wrong and the selected option is not found (which shouldn't happen)

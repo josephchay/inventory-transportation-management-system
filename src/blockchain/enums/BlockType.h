@@ -10,8 +10,11 @@ namespace blockchain::enums {
         TRANSACTION,
     };
 
-    BlockType fromString(const std::string& typeString);
-    std::string toString(BlockType type);
+    class BlockTypeUtils {
+    public:
+        static BlockType fromString(const std::string& typeString);
+        static std::string toString(BlockType type);
+    };
 } // namespace blockchain
 
 #endif // BLOCKTYPE_H

@@ -21,8 +21,6 @@ namespace blockchain {
         void setNonce(int nonce);
 
         // getters
-        [[nodiscard]] int getVersion() const;
-        [[nodiscard]] std::string getBits() const;
         [[nodiscard]] std::string getHash() const;
         [[nodiscard]] std::string getPrevHash() const;
         [[nodiscard]] std::string getMerkleRoot() const;

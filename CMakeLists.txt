@@ -38,4 +38,8 @@ add_executable(inventory_transportation_management_system src/main.cpp
         libs/sha384/sha384.cpp
         src/blockchain/enums/HashAlgorithm.h
         libs/sha512/sha512.h
-        libs/sha512/sha512.cpp)
+        libs/sha512/sha512.cpp
+        src/blockchain/enums/BlockAttribute.h
+        src/blockchain/enums/BlockAttribute.cpp
+        data/Config.h
+        data/Config.cpp)
