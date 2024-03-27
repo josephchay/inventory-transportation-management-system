@@ -18,6 +18,7 @@ namespace blockchain {
         void setMerkleRoot(const std::string& merkleRoot);
         void setTimestamp(time_t timestamp);
         void setFormattedTimestamp(const std::string& formattedTimestamp);
+        void setInformationString(const std::string& informationString);
         void setNonce(int nonce);
 
         // getters

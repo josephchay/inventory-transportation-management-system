@@ -6,10 +6,20 @@
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
+#include <memory>
 #include "BlockHeader.h"
 #include "enums/BlockType.h"
 
 namespace blockchain {
+    /**
+     * @brief Information about a block
+     * Used as a placeholder for derived structs
+     */
+    struct BlockInfo {
+        virtual ~BlockInfo() = default;
+        virtual std::string toString() const = 0; // Pure virtual function
+    };
+
     class Block {
     public:
         [[nodiscard]] blockchain::enums::BlockType getType() const;
@@ -26,6 +36,9 @@ namespace blockchain {
 
         void setGenesis(bool genesisValue);
         void setVisible(bool visibility);
+        void setInformationString(const std::string& information);
+
+        virtual std::shared_ptr<Block> clone() const = 0;
 
     protected:
         blockchain::enums::BlockType type;

@@ -44,13 +44,12 @@ namespace blockchain {
     std::function<std::string(std::string)> getHashFunction(blockchain::enums::BlockType type) {
         switch (type) {
             case blockchain::enums::BlockType::SUPPLIER:
+            default:
                 return sha256;
             case blockchain::enums::BlockType::TRANSPORTER:
                 return sha384;
             case blockchain::enums::BlockType::TRANSACTION:
                 return sha512;
-            default:
-                return sha256;
         }
     }
 
@@ -139,4 +138,16 @@ namespace blockchain {
     std::string BlockHeader::getFormattedTimestamp() const { return formattedTimestamp; }
     std::string BlockHeader::getInformationString() const { return informationString; }
     int BlockHeader::getNonce() const { return nonce; }
+
+    // Setter methods
+    void BlockHeader::setHash(const std::string& hash) { this->hash = hash; }
+    void BlockHeader::setPrevHash(const std::string& prevHash) { this->previousHash = prevHash; }
+    void BlockHeader::setMerkleRoot(const std::string& merkleRoot) { this->merkleRoot = merkleRoot; }
+    void BlockHeader::setTimestamp(time_t timestamp) {
+        this->timestamp = timestamp;
+        this->formattedTimestamp = utils::Datetime::formatTimestamp(timestamp);
+    }
+    void BlockHeader::setFormattedTimestamp(const std::string& formattedTimestamp) { this->formattedTimestamp = formattedTimestamp; }
+    void BlockHeader::setInformationString(const std::string& informationString) { this->informationString = informationString; }
+    void BlockHeader::setNonce(int nonce) { this->nonce = nonce; }
 } // namespace blockchain

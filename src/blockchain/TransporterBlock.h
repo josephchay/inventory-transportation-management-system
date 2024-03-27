@@ -4,7 +4,7 @@
 #include <string>
 
 namespace blockchain {
-    struct TransporterInfo {
+    struct TransporterInfo : public BlockInfo {
         int transporterId;
         std::string transporterName;
         std::string productType;
@@ -15,6 +15,8 @@ namespace blockchain {
         TransporterInfo() = default;
         TransporterInfo(const int& id, const std::string& name, const std::string& productType, const std::string& transportationType, const std::string& orderingType, const double& orderingAmount)
                 : transporterId(id), transporterName(name), productType(productType), transportationType(transportationType), orderingType(orderingType), orderingAmount(orderingAmount) {}
+
+        [[nodiscard]] std::string toString() const override;
     };
 
     class TransporterBlock : public Block {
@@ -23,8 +25,11 @@ namespace blockchain {
 
         TransporterInfo getInfo() const;
 
+        [[nodiscard]] std::shared_ptr<Block> clone() const override {
+            return std::make_shared<TransporterBlock>(*this);
+        }
+
     private:
         TransporterInfo info;
-        static std::string formatTransporterInfo(const TransporterInfo& info);
     };
 }

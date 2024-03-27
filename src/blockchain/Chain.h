@@ -30,10 +30,13 @@ namespace blockchain {
          * @brief "Removes" a block from the blockchain by flagging it as invisible.
          * The block still remains in the blockchain data record due to immutability but will not be displayed.
          *
-         * @param blockToHide
+         * @param block
          * @return
          */
-        Chain& removeBlock(std::shared_ptr<Block> blockToHide);
+        Chain& hardHideBlock(std::shared_ptr<Block> block);
+        Chain& editBlock(std::shared_ptr<Block> block, const std::string& info);
+        Chain& hardEditBlock(std::shared_ptr<Block> block, const std::string& info);
+
         void displayAll() const;
         void display(const std::vector<std::shared_ptr<Block>>& selectedBlocks) const;
 

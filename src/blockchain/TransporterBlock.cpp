@@ -2,18 +2,18 @@
 
 namespace blockchain {
     TransporterBlock::TransporterBlock(const int version, const std::string bits, int height, const std::string& previousHash, const TransporterInfo& info, int nonce, const std::string& currentHash, bool visible)
-            : Block(version, bits, height, previousHash, formatTransporterInfo(info), blockchain::enums::BlockType::TRANSPORTER, nonce, currentHash, visible), info(info) {
+            : Block(version, bits, height, previousHash, info.toString(), blockchain::enums::BlockType::TRANSPORTER, nonce, currentHash, visible), info(info) {
         // No additional initialization needed here
     }
 
-    std::string TransporterBlock::formatTransporterInfo(const TransporterInfo& info) {
+    std::string TransporterInfo::toString() const {
         std::ostringstream oss;
-        oss << "ID: " << info.transporterId
-            << " | Name: " << info.transporterName
-            << " | Product Type: " << info.productType
-            << " | Transportation Type: " << info.transportationType
-            << " | Ordering Type: " << info.orderingType
-            << " | Ordering Amount (Kg): " << info.orderingAmount;
+        oss << "ID: " << transporterId
+            << " | Name: " << transporterName
+            << " | Product Type: " << productType
+            << " | Transportation Type: " << transportationType
+            << " | Ordering Type: " << orderingType
+            << " | Ordering Amount (Kg): " << orderingAmount;
         return oss.str();
     }
 

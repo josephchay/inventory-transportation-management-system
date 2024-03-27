@@ -4,6 +4,7 @@
 #include "../filesystem/FileReader.h"
 #include "../filesystem/FileWriter.h"
 #include "../utils/Structures.h"
+#include "../../data/Config.h"
 #include <string>
 
 namespace collection {
@@ -104,11 +105,53 @@ namespace collection {
     }
 
     void Prompt::collectBlockManipulationCriteria(blockchain::Chain& blockchain, blockchain::Chain& redactedBlockchain, const std::vector<std::string>& searchOptions) {
+        using namespace blockchain::enums;
+
         std::vector<std::string> types = { "Edit", "Delete" };
         int type = validation::InputValidator::validateSelectionInt("Manipulation Type", types);
 
         if (type == 1) {
+            std::vector<std::string> editTypes = { "Soft Edit", "Hard Edit" };
 
+            int editType = validation::InputValidator::validateSelectionInt("Edit Type", editTypes);
+
+            std::vector<std::shared_ptr<blockchain::Block>> foundBlocks;
+            do {
+                auto [searchAttr, searchValue] = collection::Prompt::collectSearchCriteria(searchOptions, (editType == 1 ? "soft edit" : "hard edit"));
+                foundBlocks = (editType == 1 ? redactedBlockchain.searchBlockByAttr(searchAttr, searchValue) : blockchain.searchBlockByAttr(searchAttr, searchValue));
+
+                if (foundBlocks.size() > 1) {
+                    std::cout << foundBlocks.size() << " blocks matching the criteria found. Manipulate one block at a time!" << std::endl << std::endl;
+                }
+            } while (foundBlocks.size() > 1);
+
+            // Found only one block, proceed with editing
+            std::shared_ptr<blockchain::BlockInfo> infoPtr;
+            switch (foundBlocks[0]->getType()) {
+                case blockchain::enums::BlockType::SUPPLIER:
+                    infoPtr = std::make_shared<blockchain::SupplierInfo>(
+                            collection::Prompt::collectSupplierInfo(data::Config::OPTIONS_SUPPLIER_FILE_PATH));
+                    break;
+
+                case blockchain::enums::BlockType::TRANSPORTER:
+                    infoPtr = std::make_shared<blockchain::TransporterInfo>(
+                            collection::Prompt::collectTransporterInfo(data::Config::OPTIONS_TRANSPORTER_FILE_PATH));
+                    break;
+
+                case blockchain::enums::BlockType::TRANSACTION:
+                    infoPtr = std::make_shared<blockchain::TransactionInfo>(
+                            collection::Prompt::collectTransactionInfo(data::Config::OPTIONS_TRANSACTION_FILE_PATH, data::Config::RECORDS_BLOCKCHAIN_FILE_PATH));
+                    break;
+
+                default:
+                    std::cerr << "Unsupported block type" << std::endl;
+                    return; // Ensure to exit the method if the block type is unsupported
+            }
+
+            redactedBlockchain.editBlock(foundBlocks[0], infoPtr->toString());
+            if (editType == 2) {
+                blockchain.hardEditBlock(foundBlocks[0], infoPtr->toString());
+            }
         } else {
             std::vector<std::string> delTypes = { "Soft Delete", "Hard Delete" };
             int delType = validation::InputValidator::validateSelectionInt("Delete Type", delTypes);
@@ -116,16 +159,17 @@ namespace collection {
             std::vector<std::shared_ptr<blockchain::Block>> foundBlocks;
             do {
                 auto [searchAttr, searchValue] = collection::Prompt::collectSearchCriteria(searchOptions, (delType == 1 ? "soft delete" : "hard delete"));
-                foundBlocks = blockchain.searchBlockByAttr(searchAttr, searchValue);
+                foundBlocks = (delType == 1 ? redactedBlockchain.searchBlockByAttr(searchAttr, searchValue) : blockchain.searchBlockByAttr(searchAttr, searchValue));
 
                 if (foundBlocks.size() > 1) {
                     std::cout << foundBlocks.size() << " blocks matching the criteria found. Manipulate one block at a time!" << std::endl << std::endl;
                 }
             } while (foundBlocks.size() > 1);
 
+            // Found only one block, proceed with deletion
             redactedBlockchain.hideBlock(foundBlocks[0]);
             if (delType == 2) {
-                blockchain.removeBlock(foundBlocks[0]);
+                blockchain.hardHideBlock(foundBlocks[0]);
             }
         }
     }

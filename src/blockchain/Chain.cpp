@@ -11,7 +11,7 @@ namespace blockchain {
         block->setGenesis(block->getHeight() == 0);
         blocks.push_back(std::move(block));
 
-        return *this;
+        return *this; // Enable chaining of operations
     }
 
     Chain& Chain::hideBlock(std::shared_ptr<Block> block) {
@@ -23,23 +23,48 @@ namespace blockchain {
 
         blocks.erase(it, blocks.end()); // Erase the specified block
 
-        return *this;
+        return *this; // Enable chaining of operations
     }
 
-    Chain& Chain::removeBlock(std::shared_ptr<Block> blockToHide) {
-        // The lambda captures blockToHide by value since it's a shared_ptr
-        auto it = std::find(blocks.begin(), blocks.end(), blockToHide);
+    Chain& Chain::hardHideBlock(std::shared_ptr<Block> block) {
+        // The lambda captures block by value since it's a shared_ptr
+        auto it = std::find(blocks.begin(), blocks.end(), block);
 
         if (it != blocks.end()) {
             (*it)->setVisible(false);
         }
 
         filesystem::FileWriter::clearFile(dataFilePath); // Clear the file before writing the updated data
-        for (const auto& block : blocks) {
-            logBlockDetails(*block, dataFilePath);
+        for (const auto& itBlock : blocks) {
+            logBlockDetails(*itBlock, dataFilePath);
         }
 
-        return *this;
+        return *this; // Enable chaining of operations
+    }
+
+    Chain& Chain::editBlock(std::shared_ptr<Block> block, const std::string& info) {
+        auto clonedBlock = block->clone(); // Clone the block to avoid modifying the original
+        clonedBlock->setInformationString(info);
+
+        auto it = std::find(blocks.begin(), blocks.end(), block);
+
+        // If found, replace it with the new block
+        if (it != blocks.end()) {
+            *it = clonedBlock;
+        }
+
+        return *this; // Enable chaining of operations
+    }
+
+    Chain& Chain::hardEditBlock(std::shared_ptr<Block> block, const std::string& info) {
+        block->setInformationString(info);
+
+        filesystem::FileWriter::clearFile(dataFilePath); // Clear the file before writing the updated data
+        for (const auto& itBlock : blocks) {
+            logBlockDetails(*itBlock, dataFilePath);
+        }
+
+        return *this; // Enable chaining of operations
     }
 
     bool Chain::isEmpty() const {

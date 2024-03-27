@@ -4,7 +4,7 @@
 #include <string>
 
 namespace blockchain {
-    struct SupplierInfo {
+    struct SupplierInfo : public BlockInfo {
         int supplierId;
         std::string supplierName;
         std::string supplierLocation;
@@ -13,6 +13,8 @@ namespace blockchain {
         SupplierInfo() = default;
         SupplierInfo(const int& id, const std::string& name, const std::string& location, const std::string& branch)
                 : supplierId(id), supplierName(name), supplierLocation(location), supplierBranch(branch) {}
+
+        [[nodiscard]] std::string toString() const override;
     };
 
     class SupplierBlock : public Block {
@@ -35,12 +37,14 @@ namespace blockchain {
          */
         SupplierInfo getInfo() const;
 
+        [[nodiscard]] std::shared_ptr<Block> clone() const override {
+            return std::make_shared<SupplierBlock>(*this);
+        }
+
     private:
         /**
          * This field holds the raw supplier information.
          */
         SupplierInfo info;
-
-        static std::string formatSupplierInfo(const SupplierInfo& info);
     };
 }

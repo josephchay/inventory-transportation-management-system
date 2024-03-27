@@ -30,7 +30,7 @@ namespace filesystem {
         return orderedOptions;
     }
 
-    const std::vector<BlockInfo>& FileReader::getBlocks() const {
+    const std::vector<BlockData>& FileReader::getBlocks() const {
         return blocks;
     }
 
@@ -106,7 +106,7 @@ namespace filesystem {
         }
 
         std::string line;
-        BlockInfo currentBlock;
+        BlockData currentBlock;
         bool blockStarted = false;
 
         while (getline(file, line)) {
@@ -114,9 +114,9 @@ namespace filesystem {
                 if (blockStarted) {
                     // Save the previous block before starting a new one
                     blocks.push_back(currentBlock);
-                    currentBlock = BlockInfo(); // Reset for next block
+                    currentBlock = BlockData(); // Reset for next block
                 }
-                currentBlock.type = blockchain::enums::BlockTypeUtils::fromString(extractBlockData(line));
+                currentBlock.type = BlockTypeUtils::fromString(extractBlockData(line));
                 blockStarted = true;
             } else if (line.find(BlockAttributeUtils::toString(BlockAttribute::HEIGHT)+ ":") != std::string::npos) {
                 currentBlock.height = std::stoi(extractBlockData(line));

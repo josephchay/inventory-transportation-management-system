@@ -30,7 +30,7 @@ int main() {
     blockchain::enums::BlockType lastBlockType = blockchain::enums::BlockType::TRANSACTION; // Default to Transaction if no blocks were added
 
     if (!blocks.empty()) {
-        // Now, iterate over each BlockInfo and add the corresponding block to the blockchain
+        // Now, iterate over each BlockData and add the corresponding block to the blockchain
         for (const auto& blockData : blocks) {
             if (blockData.type == blockchain::enums::BlockType::SUPPLIER) {
                 auto block = std::make_shared<blockchain::SupplierBlock>(conversion::DataConverter::convertToSupplierBlock(data::Config::VERSION, blockchain.getBits(), blockData.height, blockData.nonce, blockData.currentHash, blockData.previousHash, blockData.information, blockData.visible));
@@ -103,13 +103,12 @@ int main() {
                     redactedBlockchain.displayAll();
                 }
                 break;
-            case 2:
-            {
+            case 2: {
                 auto [searchAttr, searchValue] = collection::Prompt::collectSearchCriteria(searchOptions);
 
                 blockchain.display(blockchain.searchBlockByAttr(searchAttr, searchValue));
-            }
                 break;
+            }
             case 3:
                 // Call the function at the current index
                 functions[index]();

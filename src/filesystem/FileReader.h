@@ -13,7 +13,7 @@ namespace filesystem {
         CHAIN
     };
 
-    struct BlockInfo {
+    struct BlockData {
         blockchain::enums::BlockType type;
         int height;
         int nonce;
@@ -34,11 +34,11 @@ namespace filesystem {
         std::vector<std::string> getDataById(const std::string& id) const;
         static std::vector<std::string> parseBracketOptions(const std::string& bracketedString);
 
-        const std::vector<BlockInfo>& getBlocks() const;
+        const std::vector<BlockData>& getBlocks() const;
         static std::vector<int> extractBlockIds(const std::string& filePath, const std::string& blockType);
 
     private:
-        std::vector<BlockInfo> blocks;
+        std::vector<BlockData> blocks;
         std::vector<std::string> orderedOptions;
 
         std::map<std::string, std::vector<std::string>> idToDataMap;
