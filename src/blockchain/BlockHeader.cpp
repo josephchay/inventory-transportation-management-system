@@ -1,6 +1,6 @@
 #include "BlockHeader.h"
-#include "../../libs/sha256/sha256.h"
 #include "../utils/Datetime.h"
+#include "../../libs/sha256/sha256.h"
 #include "../../libs/sha384/sha384.h"
 #include "../../libs/sha512/sha512.h"
 #include <random>
@@ -41,7 +41,7 @@ namespace blockchain {
         }
     }
 
-    std::function<std::string(std::string)> getHashFunction(blockchain::enums::BlockType type) {
+    std::function<std::string(std::string)> BlockHeader::getHashFunction(blockchain::enums::BlockType type) {
         switch (type) {
             case blockchain::enums::BlockType::SUPPLIER:
             default:
@@ -54,18 +54,19 @@ namespace blockchain {
     }
 
     BlockHeader::BlockHeader(blockchain::enums::BlockType type, const int version, const std::string bits, const std::string& informationString, int nonce, const std::string& currentHash, const std::string& previousHash)
-            : version(version), bits(bits), informationString(informationString) {
+            : type(type), version(version), bits(bits), informationString(informationString) {
         // Initialize timestamp with the current date and time
         this->timestamp = std::time(nullptr); // Current time
         this->formattedTimestamp = utils::Datetime::formatTimestamp(this->timestamp);
 
         // For a genesis block, set the previous block hash to initially 64 zeros
         this->previousHash = previousHash.empty() || previousHash == "0" ? std::string(64, '0') : previousHash;
-        this->merkleRoot = sha256(informationString);
+        this->merkleRoot = getHashFunction(type)(informationString);
 
         if (currentHash.empty()) {
             this->hash = mine(getHashFunction(type));
         } else {
+            setMined(true); // Block is already mined (from file data
             this->hash = currentHash;
             this->nonce = nonce;
         }
@@ -88,22 +89,7 @@ namespace blockchain {
         bool hashFound = false;
 
         do {
-            // Construct the block header as a byte array for hashing
-            std::vector<uint8_t> blockHeader;
-
-            appendIntToVector(blockHeader, version);
-            appendHexToVector(blockHeader, previousHash);
-            appendHexToVector(blockHeader, merkleRoot); // in hex value
-            // Timestamp needs to be converted to bytes and appended
-            appendIntToVector(blockHeader, static_cast<uint32_t>(timestamp));
-            appendHexToVector(blockHeader, bits);
-            appendIntToVector(blockHeader, nonce);
-
-            // Convert blockHeader to a string for SHA256 hashing
-            std::string blockHeaderStr(blockHeader.begin(), blockHeader.end());
-
-            // Hash the block header using the provided hash function
-            currentHashHex = hashFunction(blockHeaderStr);
+            currentHashHex = generateHash(hashFunction);
 
             // Convert the current hash back to bytes for comparison
             std::vector<uint8_t> currentHashBytes = hexStringToBytes(currentHashHex);
@@ -123,6 +109,7 @@ namespace blockchain {
 
         if (hashFound) {
             std::cout << std::endl << std::endl << "Block mined! Nonce: " << this->nonce << ", Hash: " << currentHashHex << std::endl << std::endl;
+            setMined(true);
             return currentHashHex;
         } else {
             std::cout << std::endl << std::endl << "Mining ended, nonce limit reached." << std::endl << std::endl;
@@ -130,7 +117,38 @@ namespace blockchain {
         }
     }
 
+    std::basic_string<char> BlockHeader::generateHash(const std::function<std::string(std::string)> &hashFunction) const {
+        // Construct the block header as a byte array for hashing
+        std::vector<uint8_t> blockHeader;
+
+        appendIntToVector(blockHeader, version);
+        appendHexToVector(blockHeader, previousHash);
+        appendHexToVector(blockHeader, merkleRoot); // in hex value
+        // Timestamp needs to be converted to bytes and appended
+        appendIntToVector(blockHeader, static_cast<uint32_t>(timestamp));
+        appendHexToVector(blockHeader, bits);
+        appendIntToVector(blockHeader, nonce);
+
+        // Convert blockHeader to a string for SHA256 hashing
+        std::string blockHeaderStr(blockHeader.begin(), blockHeader.end());
+
+        // Hash the block header using the provided hash function
+        return hashFunction(blockHeaderStr);
+    }
+
+    BlockHeader& BlockHeader::updateEditableData(const std::string informationString, std::string prevHash) {
+        setInformationString(informationString);
+        setMerkleRoot(getHashFunction(type)(informationString));
+//        setPrevHash(prevHash.empty() || prevHash == "0" ? std::string(64, '0') : prevHash);
+//        setHash(generateHash(getHashFunction(type)));
+//        setMined(false); // Reset mined status after updating data, user has the choice to mine again
+//        setPrevHash(prevHash.empty() || prevHash == "0" ? hash : prevHash);
+
+        return *this;
+    }
+
     // Getter methods
+    blockchain::enums::BlockType BlockHeader::getType() const { return type; }
     std::string BlockHeader::getHash() const { return hash; }
     std::string BlockHeader::getPrevHash() const { return previousHash; }
     std::string BlockHeader::getMerkleRoot() const { return merkleRoot; }
@@ -138,6 +156,7 @@ namespace blockchain {
     std::string BlockHeader::getFormattedTimestamp() const { return formattedTimestamp; }
     std::string BlockHeader::getInformationString() const { return informationString; }
     int BlockHeader::getNonce() const { return nonce; }
+    bool BlockHeader::isMined() const { return mined; }
 
     // Setter methods
     void BlockHeader::setHash(const std::string& hash) { this->hash = hash; }
@@ -150,4 +169,5 @@ namespace blockchain {
     void BlockHeader::setFormattedTimestamp(const std::string& formattedTimestamp) { this->formattedTimestamp = formattedTimestamp; }
     void BlockHeader::setInformationString(const std::string& informationString) { this->informationString = informationString; }
     void BlockHeader::setNonce(int nonce) { this->nonce = nonce; }
+    void BlockHeader::setMined(bool mined) { this->mined = mined; }
 } // namespace blockchain

@@ -25,12 +25,8 @@ namespace blockchain {
         [[nodiscard]] blockchain::enums::BlockType getType() const;
         [[nodiscard]] int getHeight() const;
         [[nodiscard]] int getNonce() const;
-        [[nodiscard]] std::string getHash() const;
-        [[nodiscard]] std::string getPrevHash() const;
-        [[nodiscard]] std::string getMerkleRoot() const;
-        [[nodiscard]] time_t getTimestamp() const;
-        [[nodiscard]] std::string getFormattedTimestamp() const;
-        [[nodiscard]] std::string getInformationString() const;
+        [[nodiscard]] BlockHeader& getHeader();
+        [[nodiscard]] BlockHeader getHeader() const;
         [[nodiscard]] bool isGenesis() const;
         [[nodiscard]] bool isVisible() const;
 

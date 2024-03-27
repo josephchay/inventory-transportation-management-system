@@ -17,6 +17,9 @@ namespace blockchain {
 
         Chain& addBlock(std::shared_ptr<Block> block);
 
+        Chain& editBlock(std::shared_ptr<Block> block, const std::string& info);
+        Chain& hardEditBlock(std::shared_ptr<Block> block, const std::string& info);
+
         /**
          * @brief Temporarily hide a block from the blockchain.
          * The block still remain in the blockchain data record but will not be displayed
@@ -34,8 +37,8 @@ namespace blockchain {
          * @return
          */
         Chain& hardHideBlock(std::shared_ptr<Block> block);
-        Chain& editBlock(std::shared_ptr<Block> block, const std::string& info);
-        Chain& hardEditBlock(std::shared_ptr<Block> block, const std::string& info);
+
+        Chain& mineBlock(std::shared_ptr<Block> block);
 
         void displayAll() const;
         void display(const std::vector<std::shared_ptr<Block>>& selectedBlocks) const;
@@ -43,6 +46,7 @@ namespace blockchain {
         [[nodiscard]] std::vector<std::shared_ptr<Block>> searchBlockByAttr(blockchain::enums::BlockAttribute attribute, const std::string& value) const;
         [[nodiscard]] int getNextBlockHeight() const;
         [[nodiscard]] std::string getLastBlockHash() const;
+        std::shared_ptr<Block> getBlockByHeight(int height);
         [[nodiscard]] bool isEmpty() const;
         void addToRecord();
 
@@ -57,6 +61,6 @@ namespace blockchain {
         void logBlockDetails(const Block& block, const std::string& filename);
 
         void displayBlockDetails(const std::shared_ptr<Block> &block) const;
-        bool hasVisibleBlocks(const std::vector<std::shared_ptr<Block>>& blocks) const;
+        [[nodiscard]] bool hasVisibleBlocks(const std::vector<std::shared_ptr<Block>>& blocks) const;
     };
 }

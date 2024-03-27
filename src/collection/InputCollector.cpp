@@ -148,6 +148,11 @@ namespace collection {
                     return; // Ensure to exit the method if the block type is unsupported
             }
 
+            if (foundBlocks.empty()) {
+                std::cout << "No blocks found matching the criteria." << std::endl;
+                return;
+            }
+
             redactedBlockchain.editBlock(foundBlocks[0], infoPtr->toString());
             if (editType == 2) {
                 blockchain.hardEditBlock(foundBlocks[0], infoPtr->toString());
@@ -165,6 +170,11 @@ namespace collection {
                     std::cout << foundBlocks.size() << " blocks matching the criteria found. Manipulate one block at a time!" << std::endl << std::endl;
                 }
             } while (foundBlocks.size() > 1);
+
+            if (foundBlocks.empty()) {
+                std::cout << "No blocks found matching the criteria." << std::endl;
+                return;
+            }
 
             // Found only one block, proceed with deletion
             redactedBlockchain.hideBlock(foundBlocks[0]);

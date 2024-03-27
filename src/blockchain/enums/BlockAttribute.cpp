@@ -25,6 +25,8 @@ namespace blockchain::enums {
             return BlockAttribute::BITS;
         } else if (attributeString == "Information") {
             return BlockAttribute::INFORMATION;
+        } else if (attributeString == "Mined") {
+            return BlockAttribute::MINED;
         } else if (attributeString == "Visible") {
             return BlockAttribute::VISIBLE;
         } else {
@@ -54,6 +56,8 @@ namespace blockchain::enums {
                 return "Bits";
             case BlockAttribute::INFORMATION:
                 return "Information";
+            case BlockAttribute::MINED:
+                return "Mined";
             case BlockAttribute::VISIBLE:
                 return "Visible";
             default:
