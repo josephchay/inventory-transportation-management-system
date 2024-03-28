@@ -30,26 +30,28 @@ namespace blockchain {
 
     Chain& Chain::hardEditBlock(std::shared_ptr<Block> block, const std::string& info) {
         // Find the index of the block that was edited
-//        auto it = std::find_if(blocks.begin(), blocks.end(),
-//                               [&block](const std::shared_ptr<Block>& b) {
-//                                   return b == block;
-//                               });
-//
-//        if (it == blocks.end()) {
-//            // Block not found
-//            return *this;
-//        }
-//
-//        // Calculate the position (index) fo the edited block
-//        size_t startIndex = std::distance(blocks.begin(), it);
-//
-//        // Update all subsequent blocks
-//        for (size_t i = startIndex; i < blocks.size(); ++i) {
-//            // For each subsequent block, update its information and previous hash for hash recalculation.
-//            blocks[i]->getHeader().updateEditableData(info, blocks[i - 1] ? blocks[i - 1]->getHeader().getHash() : "");
-//        }
+        auto it = std::find_if(blocks.begin(), blocks.end(),
+                               [&block](const std::shared_ptr<Block>& b) {
+                                   return b == block;
+                               });
 
-        block->getHeader().updateEditableData(info);
+        if (it == blocks.end()) {
+            // Block not found
+            return *this;
+        }
+
+        // Calculate the position (index) for the edited block
+        size_t startIndex = std::distance(blocks.begin(), it);
+
+        // Update the current block first
+        if (startIndex < blocks.size()) {
+            blocks[startIndex]->getHeader().updateEditableData(info, (startIndex > 0) ? blocks[startIndex - 1]->getHeader().getHash() : "");
+        }
+
+        // Now, update the previous hash in subsequent blocks to maintain chain integrity
+        for (size_t i = startIndex + 1; i < blocks.size(); ++i) {
+            blocks[i]->getHeader().updateEditableData(blocks[i]->getHeader().getInformationString(), blocks[i - 1]->getHeader().getHash());
+        }
 
         filesystem::FileWriter::clearFile(dataFilePath); // Clear the file before writing the updated data
         for (const auto& itBlock : blocks) {
@@ -90,8 +92,21 @@ namespace blockchain {
     Chain& Chain::mineBlock(std::shared_ptr<Block> block) {
         auto it = std::find(blocks.begin(), blocks.end(), block);
 
+        std::string newHash;
         if (it != blocks.end()) {
-            (*it)->getHeader().mine(blockchain::BlockHeader::getHashFunction(block->getType()));
+            newHash = (*it)->getHeader().mine(blockchain::BlockHeader::getHashFunction(block->getType()));
+            (*it)->getHeader().setHash(newHash);
+
+            // If this is the genesis block (the first block), set its prevHash to its new hash
+            if (std::distance(blocks.begin(), it) == 0) {
+                (*it)->getHeader().setPrevHash(newHash);
+            }
+
+            // For subsequent blocks, update the next block's previous hash if there is one
+            auto nextIt = std::next(it);
+            if (nextIt != blocks.end()) {
+                (*nextIt)->getHeader().setPrevHash(newHash);
+            }
         }
 
         filesystem::FileWriter::clearFile(dataFilePath); // Clear the file before writing the updated data
@@ -276,7 +291,7 @@ namespace blockchain {
         writer.writeLine(BlockAttributeUtils::toString(BlockAttribute::TIMESTAMP) + ": " + std::to_string(block.getHeader().getTimestamp()));
         writer.writeLine(BlockAttributeUtils::toString(BlockAttribute::BITS) + ": " + bits);
         writer.writeLine(BlockAttributeUtils::toString(BlockAttribute::INFORMATION) + ": " + block.getHeader().getInformationString());
-        writer.writeLine(BlockAttributeUtils::toString(BlockAttribute::MINED) + ": " + (block.getHeader().isMined() ? "Yes" : "No"));
+        writer.writeLine(BlockAttributeUtils::toString(BlockAttribute::MINED) + ": " + (block.getHeader().isMined() ? "true" : "false"));
         writer.writeLine(BlockAttributeUtils::toString(BlockAttribute::VISIBLE) + ": " + (block.isVisible() ? "true" : "false"));
         writer.writeLine(""); // Add an empty line for readability
     }

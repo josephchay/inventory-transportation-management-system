@@ -30,7 +30,7 @@ int main() {
     blockchain::enums::BlockType lastBlockType = blockchain::enums::BlockType::TRANSACTION; // Default to Transaction if no blocks were added
 
     if (!blocks.empty()) {
-        // Now, iterate over each BlockData and add the corresponding block to the blockchain
+        // Iterate over each BlockData and add the corresponding block to the blockchain
         for (const auto& blockData : blocks) {
             if (blockData.type == blockchain::enums::BlockType::SUPPLIER) {
                 auto block = std::make_shared<blockchain::SupplierBlock>(conversion::DataConverter::convertToSupplierBlock(data::Config::VERSION, blockchain.getBits(), blockData.height, blockData.nonce, blockData.currentHash, blockData.previousHash, blockData.information, blockData.visible));

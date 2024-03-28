@@ -136,13 +136,13 @@ namespace blockchain {
         return hashFunction(blockHeaderStr);
     }
 
-    BlockHeader& BlockHeader::updateEditableData(const std::string informationString, std::string prevHash) {
+    BlockHeader& BlockHeader::updateEditableData(const std::string informationString, const std::string& prevHash) {
         setInformationString(informationString);
         setMerkleRoot(getHashFunction(type)(informationString));
-//        setPrevHash(prevHash.empty() || prevHash == "0" ? std::string(64, '0') : prevHash);
-//        setHash(generateHash(getHashFunction(type)));
-//        setMined(false); // Reset mined status after updating data, user has the choice to mine again
-//        setPrevHash(prevHash.empty() || prevHash == "0" ? hash : prevHash);
+        setPrevHash(prevHash.empty() || prevHash == "0" ? std::string(64, '0') : prevHash);
+        setHash(generateHash(getHashFunction(type)));
+        setMined(false); // Reset mined status after updating data, user has the choice to mine again
+        setPrevHash(prevHash.empty() || prevHash == "0" ? hash : prevHash);
 
         return *this;
     }

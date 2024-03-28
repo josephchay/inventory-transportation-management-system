@@ -15,7 +15,7 @@ namespace blockchain {
         static std::function<std::string(std::string)> getHashFunction(blockchain::enums::BlockType type);
         std::string mine(std::function<std::string(std::string)> hashFunction);
 
-        BlockHeader& updateEditableData(const std::string informationString, const std::string prevHash = "");
+        BlockHeader& updateEditableData(const std::string informationString, const std::string& prevHash = "");
 
         // setters
         void setHash(const std::string& hash);

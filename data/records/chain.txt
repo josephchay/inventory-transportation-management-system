@@ -1,0 +1,52 @@
+Block Type: Supplier
+Height: 0
+Version: 1
+Nonce: 374572
+Current Hash: 000092ad25d432eb63d3e11f466a06f4ba075737db4d5a27eb05acd013560bab
+Previous Hash: 000092ad25d432eb63d3e11f466a06f4ba075737db4d5a27eb05acd013560bab
+Merkle Root: e6c56266688f1c219f9d6664e3e34c1e32f9fb34402bdab047c3955d990097b5
+Timestamp: 1711587883
+Bits: ffff001f
+Information: ID: 41673 | Name: First Stop All-In-One Supplies | Location: Bandar Bukit Raja, Klang, Selangor | Branch: Klang
+Mined: true
+Visible: true
+
+Block Type: Transporter
+Height: 1
+Version: 1
+Nonce: 26535
+Current Hash: 60bb21b27302beb0f6dc7d368e028266a412849f97bed887aec433e9e505fdc46eb87dd509cb3d4fa4411ed847a3a6bb
+Previous Hash: 000092ad25d432eb63d3e11f466a06f4ba075737db4d5a27eb05acd013560bab
+Merkle Root: 1dfdf5b8dbfe8bcbef6561577d679547c999bdf6c8cdfe315e2f3866cafaae0bfa0f21aa043c0a063cc784958d3e8cf2
+Timestamp: 1711587883
+Bits: ffff001f
+Information: ID: 47813 | Name: UrbanWheels Transport Solutions | Product Type: Bubble mailer | Transportation Type: FTL (Full Truckload) Shipping | Ordering Type: daily orders | Ordering Amount (Kg): 10
+Mined: false
+Visible: true
+
+Block Type: Transaction
+Height: 2
+Version: 1
+Nonce: 41953
+Current Hash: d6c5e911e60acfa6f622071cc2f881c3dba25f866e0ddb40ae9d82d00729296167b93fa67a7b11fe9ce44694c8692ebaf60e7f619dd4e5eb55cf1dc99c2baa59
+Previous Hash: 60bb21b27302beb0f6dc7d368e028266a412849f97bed887aec433e9e505fdc46eb87dd509cb3d4fa4411ed847a3a6bb
+Merkle Root: 1e9aff7e19d8f340445cf517a7e68545bf07e0434615e74e474c360b0c782d277c6ecb6e14bad2f3c95f5f0eec603933a0e663391a79b326cb65f6298ec4e8ec
+Timestamp: 1711587883
+Bits: ffff001f
+Information: ID: 10 | Retailer Per-Trip Credit Balance (RM): 2 | Annual Ordering Credit Balance (RM): 30 | Payment Type: iPay88 | Product Ordering Limit: (area (sqft)) 10
+Mined: false
+Visible: true
+
+Block Type: Supplier
+Height: 3
+Version: 1
+Nonce: 51269
+Current Hash: 61874662afe7a0aa3225e02b7a254323b9d3fb9c75c9a2fe28a809c31afd640f
+Previous Hash: d6c5e911e60acfa6f622071cc2f881c3dba25f866e0ddb40ae9d82d00729296167b93fa67a7b11fe9ce44694c8692ebaf60e7f619dd4e5eb55cf1dc99c2baa59
+Merkle Root: e6c56266688f1c219f9d6664e3e34c1e32f9fb34402bdab047c3955d990097b5
+Timestamp: 1711587883
+Bits: ffff001f
+Information: ID: 41673 | Name: First Stop All-In-One Supplies | Location: Bandar Bukit Raja, Klang, Selangor | Branch: Klang
+Mined: false
+Visible: true
+

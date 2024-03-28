@@ -72,8 +72,8 @@ namespace collection {
     }
 
     blockchain::TransactionInfo Prompt::collectTransactionInfo(const std::string& optionsFilePath, const std::string& recordsFilePath) {
-        int id;
-        std::string retailerPerTripCreditBalance, annualOrderingCreditBalance, paymentType, productOrderingLimit;
+        int id, productOrderingLimit;
+        std::string retailerPerTripCreditBalance, annualOrderingCreditBalance, paymentType;
 
         filesystem::FileReader reader(optionsFilePath, filesystem::DataType::OPTION);
 
@@ -84,17 +84,17 @@ namespace collection {
         id = std::stoi(collection::validation::InputValidator::validateUniqueIdInt("transaction ID (unique)", transactionIds));
         retailerPerTripCreditBalance = collection::validation::InputValidator::validateString("retailer per trip credit balance (RM)");
         annualOrderingCreditBalance = collection::validation::InputValidator::validateString("annual ordering credit balance (RM)");
-        paymentType = validation::InputValidator::validateSelection("supplier ID", allPaymentTypes);
+        paymentType = validation::InputValidator::validateSelection("payment type", allPaymentTypes);
 
         auto selectedData = reader.getDataById(paymentType);
 
         auto productOrderingLimitOptions = filesystem::FileReader::parseBracketOptions(selectedData[2]);
         std::string productOrderingLimitType = collection::validation::InputValidator::validateSelection("product ordering limit", productOrderingLimitOptions);
 
-        productOrderingLimit = collection::validation::InputValidator::validateString("product ordering limit (" + productOrderingLimitType + ")");
-        productOrderingLimit = "(" + productOrderingLimitType + ") " + productOrderingLimit;
+        productOrderingLimit = collection::validation::InputValidator::validateInt("product ordering limit (" + productOrderingLimitType + ")");
+        std::string productOrderingLimitStr = "(" + productOrderingLimitType + ") " + std::to_string(productOrderingLimit);
 
-        return blockchain::TransactionInfo(id, retailerPerTripCreditBalance, annualOrderingCreditBalance, paymentType, productOrderingLimit);
+        return blockchain::TransactionInfo(id, retailerPerTripCreditBalance, annualOrderingCreditBalance, paymentType, productOrderingLimitStr);
     }
 
     std::pair<blockchain::enums::BlockAttribute, std::string> Prompt::collectSearchCriteria(const std::vector<std::string>& searchOptions, const std::string& topic) {
@@ -107,7 +107,7 @@ namespace collection {
     void Prompt::collectBlockManipulationCriteria(blockchain::Chain& blockchain, blockchain::Chain& redactedBlockchain, const std::vector<std::string>& searchOptions) {
         using namespace blockchain::enums;
 
-        std::vector<std::string> types = { "Edit", "Delete" };
+        std::vector<std::string> types = { "Edit", "Delete", "Mine Edited Blocks" };
         int type = validation::InputValidator::validateSelectionInt("Manipulation Type", types);
 
         if (type == 1) {
@@ -157,7 +157,9 @@ namespace collection {
             if (editType == 2) {
                 blockchain.hardEditBlock(foundBlocks[0], infoPtr->toString());
             }
-        } else {
+
+            std::cout << "Block edited successfully." << std::endl << std::endl;
+        } else if (type == 2) {
             std::vector<std::string> delTypes = { "Soft Delete", "Hard Delete" };
             int delType = validation::InputValidator::validateSelectionInt("Delete Type", delTypes);
 
@@ -181,6 +183,34 @@ namespace collection {
             if (delType == 2) {
                 blockchain.hardHideBlock(foundBlocks[0]);
             }
+
+            std::cout << "Block deleted successfully." << std::endl << std::endl;
+        } else {
+            std::vector<std::shared_ptr<blockchain::Block>> foundBlocks;
+            do {
+                auto [searchAttr, searchValue] = collection::Prompt::collectSearchCriteria(searchOptions, "mine");
+                foundBlocks = blockchain.searchBlockByAttr(searchAttr, searchValue);
+
+                if (foundBlocks.size() > 1) {
+                    std::cout << foundBlocks.size() << " blocks matching the criteria found. Manipulate one block at a time!" << std::endl << std::endl;
+                }
+            } while (foundBlocks.size() > 1);
+
+            if (foundBlocks.empty()) {
+                std::cout << "No blocks found matching the criteria." << std::endl;
+                return;
+            }
+
+            if (foundBlocks[0]->getHeader().isMined()) {
+                std::cout << "Block Hash value is already mined to the correct pattern." << std::endl << std::endl;
+                return;
+            }
+
+            // Found only one block and has validity to be remined, proceed with mining
+            redactedBlockchain.mineBlock(foundBlocks[0]);
+            blockchain.mineBlock(foundBlocks[0]);
+
+            std::cout << "Block mined successfully." << std::endl << std::endl;
         }
     }
 } // namespace collection
