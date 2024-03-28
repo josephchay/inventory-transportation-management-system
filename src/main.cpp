@@ -8,6 +8,7 @@
 #include "collection/conversion/DataConverter.h"
 #include "collection/validator/InputValidator.h"
 #include "../data/Config.h"
+#include "authentication/Login.h"
 
 int main() {
     srand(static_cast<unsigned int>(time(0))); // Seed for random number generation
@@ -23,9 +24,9 @@ int main() {
      */
     blockchain::Chain redactedBlockchain(data::Config::RECORDS_BLOCKCHAIN_FILE_PATH, data::Config::VERSION);
 
-    // Initialize FileReader and read the block data
-    filesystem::FileReader fileReader(data::Config::RECORDS_BLOCKCHAIN_FILE_PATH, filesystem::DataType::CHAIN);
-    const auto& blocks = fileReader.getBlocks();
+    // Read the block data
+    filesystem::FileReader fileReaderChain(data::Config::RECORDS_BLOCKCHAIN_FILE_PATH, filesystem::DataType::CHAIN);
+    const auto& blocks = fileReaderChain.getBlocks();
 
     blockchain::enums::BlockType lastBlockType = blockchain::enums::BlockType::TRANSACTION; // Default to Transaction if no blocks were added
 
@@ -72,11 +73,41 @@ int main() {
             }
     };
 
-    std::string continueInput;
+    std::cout << "Enter values based on the given options, custom values or 'q'/'quit' to exit the program anytime." << std::endl << std::endl;
+
+    // Read the participants data
+    filesystem::FileReader fileReaderParticipant(data::Config::PARTICIPANTS_FILE_PATH, filesystem::DataType::PARTICIPANTS);
+    const auto& participants = fileReaderParticipant.getParticipants();
+
+    // Authenticate the user
+    authentication::Login login;
+    bool isAuthenticated = false;
+    std::unique_ptr<authentication::Participant> authenticatedUser;
+    std::string username, password;
+
+    while (!isAuthenticated) {
+        std::tie(username, password) = collection::Prompt::collectLoginDetails();
+
+        for (const auto& participant : participants) {
+            if (login.authenticate(username, password, participant)) {
+                isAuthenticated = true;
+                authenticatedUser = std::make_unique<authentication::Participant>(participant);
+                break; // Exit the for loop
+            }
+        }
+
+        if (!isAuthenticated) {
+            std::cout << "Invalid username or password. Please try again." << std::endl << std::endl;
+        } else {
+            break; // Exit the while loop since authentication was successful
+        }
+    }
+
+    // Proceed with the authenticated user.
+    std::cout << "Welcome back, " << authenticatedUser->getFullName() << "!" << std::endl << std::endl;
+
     std::vector<std::string> actionOptions = { "Display blockchain", "Search Block", "Add Block", "Manipulate Block" };
     std::vector<std::string> searchOptions = { "Block Type", "Height", "Version", "Nonce", "Current Hash", "Previous Hash", "Merkle Root", "Timestamp", "Bits", "Information" };
-
-    std::cout << "Enter values based on the given options or 'q'/'quit' to exit the program anytime." << std::endl << std::endl;
 
     int index; // Default to Supplier if no blocks were added or if the last block was Transaction
     switch (lastBlockType) {
@@ -91,6 +122,8 @@ int main() {
             index = 0; // Default to Supplier if the last block was Transaction or no blocks were added
             break;
     }
+
+    std::string participantIndustryRole = authenticatedUser->getIndustryRole();
 
     do {
         int action = collection::validation::InputValidator::validateSelectionInt("an action", actionOptions);
@@ -110,11 +143,17 @@ int main() {
                 break;
             }
             case 3:
-                // Call the function at the current index
-                functions[index]();
+                if ((participantIndustryRole == "Supplier" && index == 0) ||
+                    (participantIndustryRole == "Transporter" && index == 1) ||
+                    (participantIndustryRole == "Accountant" && index == 2)) {
 
-                // Move to the next type of block or loop back to the start
-                index = (index + 1) % functions.size();
+                    // Call the function at the current index
+                    functions[index]();
+                    // Move to the next type of block or loop back to the start
+                    index = (index + 1) % functions.size();
+                } else {
+                    std::cout << "The current block requires intervention from a different industry role." << std::endl << std::endl;
+                }
                 break;
             case 4:
                 collection::Prompt::collectBlockManipulationCriteria(blockchain, redactedBlockchain, searchOptions);

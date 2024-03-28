@@ -6,11 +6,13 @@
 #include <vector>
 #include <regex>
 #include "../blockchain/enums/BlockType.h"
+#include "../authentication/Participant.h"
 
 namespace filesystem {
     enum class DataType {
         OPTION,
-        CHAIN
+        CHAIN,
+        PARTICIPANTS,
     };
 
     struct BlockData {
@@ -30,7 +32,9 @@ namespace filesystem {
 
         void parseOptionFile(const std::string& filePath);
         void parseChainFile(const std::string& filePath);
+        void parseParticipantFile(const std::string& filePath);
         std::vector<std::string> getAllInitialOptions() const;
+        const std::vector<authentication::Participant>& getParticipants() const;
         std::vector<std::string> getDataById(const std::string& id) const;
         static std::vector<std::string> parseBracketOptions(const std::string& bracketedString);
 
@@ -40,6 +44,7 @@ namespace filesystem {
     private:
         std::vector<BlockData> blocks;
         std::vector<std::string> orderedOptions;
+        std::vector<authentication::Participant> participants;
 
         std::map<std::string, std::vector<std::string>> idToDataMap;
         static void trim(std::string& s);

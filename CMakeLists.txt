@@ -42,4 +42,8 @@ add_executable(inventory_transportation_management_system src/main.cpp
         src/blockchain/enums/BlockAttribute.h
         src/blockchain/enums/BlockAttribute.cpp
         data/Config.h
-        data/Config.cpp)
+        data/Config.cpp
+        src/authentication/Participant.cpp
+        src/authentication/Participant.h
+        src/authentication/Login.cpp
+        src/authentication/Login.h)

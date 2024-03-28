@@ -11,6 +11,7 @@ namespace data {
         static const std::string OPTIONS_SUPPLIER_FILE_PATH;
         static const std::string OPTIONS_TRANSPORTER_FILE_PATH;
         static const std::string OPTIONS_TRANSACTION_FILE_PATH;
+        static const std::string PARTICIPANTS_FILE_PATH;
     };
 } // namespace blockchain
 

@@ -6,4 +6,5 @@ namespace data {
     const std::string Config::OPTIONS_SUPPLIER_FILE_PATH = R"(../data/options/suppliers.txt)";
     const std::string Config::OPTIONS_TRANSPORTER_FILE_PATH = R"(../data/options/transporters.txt)";
     const std::string Config::OPTIONS_TRANSACTION_FILE_PATH = R"(../data/options/transactions.txt)";
+    const std::string Config::PARTICIPANTS_FILE_PATH = R"(../data/records/participants.txt)";
 }

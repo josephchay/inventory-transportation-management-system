@@ -25,6 +25,13 @@ namespace collection {
         }
     }
 
+    std::pair<std::string, std::string> Prompt::collectLoginDetails() {
+        std::string username = validation::InputValidator::validateString("username");
+        std::string password = validation::InputValidator::validateString("password");
+
+        return std::make_pair(username, password);
+    }
+
     blockchain::SupplierInfo Prompt::collectSupplierInfo(const std::string& optionsFilePath) {
         std::string id, name, location, branch;
 

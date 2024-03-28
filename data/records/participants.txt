@@ -1,0 +1,10 @@
+1,johndoe,123,John Doe,Supplier,Manager
+2,janesmith,abc,Jane Smith,Supplier,Manager
+3,michaelbrown,456,Michael Brown,Supplier,Employee
+4,emilywhite,789,Emily White,Transporter,Manager
+5,jamesblack,101,James Black,Transporter,Manager
+6,davidgreen,202,David Green,Transporter,Employee
+7,emmagray,303,Emma Gray,Accountant,Manager
+8,oliviabrown,404,Olivia Brown,Accountant,Manager
+9,williamwhite,505,William White,Accountant,Employee
+10,isabellablack,606,Isabella Black,Administrator,Manager

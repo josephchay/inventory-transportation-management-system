@@ -1,5 +1,6 @@
 #include "FileReader.h"
 #include "../blockchain/enums/BlockAttribute.h"
+#include "../utils/Structures.h"
 #include <fstream>
 #include <sstream>
 #include <algorithm>
@@ -14,6 +15,9 @@ namespace filesystem {
                 break;
             case DataType::CHAIN:
                 parseChainFile(filePath);
+                break;
+            case DataType::PARTICIPANTS:
+                parseParticipantFile(filePath);
                 break;
             default:
                 std::cerr << "Unsupported file type" << std::endl;
@@ -32,6 +36,10 @@ namespace filesystem {
 
     const std::vector<BlockData>& FileReader::getBlocks() const {
         return blocks;
+    }
+
+    const std::vector<authentication::Participant>& FileReader::getParticipants() const {
+        return participants;
     }
 
     std::vector<std::string> FileReader::getDataById(const std::string& id) const {
@@ -135,8 +143,35 @@ namespace filesystem {
             }
         }
 
-        if (blockStarted) { // Don't forget to add the last block if there is one
+        if (blockStarted) { // Add the last block if there is one
             blocks.push_back(currentBlock);
+        }
+    }
+
+    void FileReader::parseParticipantFile(const std::string& filePath) {
+        std::ifstream file(filePath);
+        std::string line;
+
+        if (!file.is_open()) {
+            throw std::runtime_error("Failed to open file: " + filePath);
+        }
+
+        while (getline(file, line)) {
+            std::vector<std::string> tokens = utils::Structures::splitLine(line);
+            if (tokens.size() >= 6) {
+                try {
+                    int id = std::stoi(tokens[0]);
+                    std::string username = tokens[1];
+                    std::string password = tokens[2];
+                    std::string fullName = tokens[3];
+                    std::string department = tokens[4];
+                    std::string role = tokens[5];
+
+                    participants.emplace_back(id, username, password, fullName, department, role); // Use the member variable directly
+                } catch (const std::exception& e) {
+                    std::cerr << "Error parsing line: " << e.what() << std::endl;
+                }
+            }
         }
     }
 

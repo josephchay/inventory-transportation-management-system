@@ -1,3 +1,4 @@
+#include <sstream>
 #include "Structures.h"
 
 namespace utils {
@@ -15,5 +16,17 @@ namespace utils {
             }
         }
         return -1; // Item not found, return -1
+    }
+
+    std::vector<std::string> Structures::splitLine(const std::string& line) {
+        std::vector<std::string> tokens;
+        std::stringstream ss(line);
+        std::string token;
+
+        while (std::getline(ss, token, ',')) {
+            tokens.push_back(token);
+        }
+
+        return tokens;
     }
 }

@@ -56,24 +56,23 @@ namespace blockchain {
     BlockHeader::BlockHeader(blockchain::enums::BlockType type, const int version, const std::string bits, const std::string& informationString, int nonce, const std::string& currentHash, const std::string& previousHash)
             : type(type), version(version), bits(bits), informationString(informationString) {
         // Initialize timestamp with the current date and time
-        this->timestamp = std::time(nullptr); // Current time
-        this->formattedTimestamp = utils::Datetime::formatTimestamp(this->timestamp);
+        setTimestamp(std::time(nullptr)); // Current time
 
         // For a genesis block, set the previous block hash to initially 64 zeros
-        this->previousHash = previousHash.empty() || previousHash == "0" ? std::string(64, '0') : previousHash;
-        this->merkleRoot = getHashFunction(type)(informationString);
+        setPrevHash(previousHash.empty() || previousHash == "0" ? std::string(64, '0') : previousHash);
+        setMerkleRoot(getHashFunction(type)(informationString));
 
         if (currentHash.empty()) {
-            this->hash = mine(getHashFunction(type));
+            setHash(mine(getHashFunction(type)));
         } else {
             setMined(true); // Block is already mined (from file data
-            this->hash = currentHash;
-            this->nonce = nonce;
+            setHash(currentHash);
+            setNonce(nonce);
         }
 
         // Set the previous hash to the mined hash for genesis block.
         if (previousHash.empty() || previousHash == "0") {
-            this->previousHash = this->hash;
+            setPrevHash(this->hash);
         }
     }
 
