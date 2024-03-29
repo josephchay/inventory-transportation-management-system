@@ -5,15 +5,35 @@
 
 namespace blockchain {
     struct SupplierInfo : public BlockInfo {
-        int supplierId;
-        std::string supplierName;
-        std::string supplierLocation;
-        std::string supplierBranch;
+        int supplierId; /** The ID of the supplier */
+        std::string supplierName; /** The name of the supplier */
+        std::string supplierLocation; /** The absolute location of the supplier */
+        std::string supplierBranch; /** The branch of the supplier */
+        std::string items; /** The items that the supplier provides in this particular block transaction */
 
+        /**
+         * @brief Default constructor for the SupplierInfo class
+         */
         SupplierInfo() = default;
-        SupplierInfo(const int& id, const std::string& name, const std::string& location, const std::string& branch)
-                : supplierId(id), supplierName(name), supplierLocation(location), supplierBranch(branch) {}
 
+        /**
+         * @brief Constructor for the SupplierInfo class
+         *
+         * @param id
+         * @param name
+         * @param location
+         * @param branch
+         * @param items
+         */
+        SupplierInfo(const int& id, const std::string& name, const std::string& location, const std::string& branch, const std::string& items)
+                : supplierId(id), supplierName(name), supplierLocation(location), supplierBranch(branch), items(items) {}
+
+        /**
+         * @brief Convert the SupplierInfo object to a string
+         * Overridden from the BlockInfo class
+         *
+         * @return
+         */
         [[nodiscard]] std::string toString() const override;
     };
 
@@ -37,6 +57,11 @@ namespace blockchain {
          */
         SupplierInfo getInfo() const;
 
+        /**
+         * @brief Provide a deep copy of the current block.
+         *
+         * @return
+         */
         [[nodiscard]] std::shared_ptr<Block> clone() const override {
             return std::make_shared<SupplierBlock>(*this);
         }

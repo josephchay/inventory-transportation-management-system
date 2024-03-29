@@ -158,24 +158,23 @@ namespace filesystem {
 
         while (getline(file, line)) {
             std::vector<std::string> tokens = utils::Structures::splitLine(line);
-            if (tokens.size() >= 6) {
-                try {
-                    int id = std::stoi(tokens[0]);
-                    std::string username = tokens[1];
-                    std::string password = tokens[2];
-                    std::string fullName = tokens[3];
-                    std::string department = tokens[4];
-                    std::string role = tokens[5];
 
-                    participants.emplace_back(id, username, password, fullName, department, role); // Use the member variable directly
-                } catch (const std::exception& e) {
-                    std::cerr << "Error parsing line: " << e.what() << std::endl;
-                }
+            try {
+                int id = std::stoi(tokens[0]);
+                std::string username = tokens[1];
+                std::string password = tokens[2];
+                std::string fullName = tokens[3];
+                std::string industryRole = tokens[4];
+                std::string role = tokens[5];
+
+                participants.emplace_back(id, username, password, fullName, industryRole, role);
+            } catch (const std::exception& e) {
+                std::cerr << "Error parsing line: " << e.what() << std::endl;
             }
         }
     }
 
-    std::string FileReader::extractBlockData(const std::string& line) const {
+    std::string FileReader::extractBlockData(const std::string& line) {
         auto pos = line.find(':');
         if (pos != std::string::npos && pos + 1 < line.length()) {
             return line.substr(pos + 2); // Skip the colon and space
@@ -190,24 +189,6 @@ namespace filesystem {
         s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
             return !std::isspace(ch);
         }).base(), s.end());
-    }
-
-    std::set<std::string> FileReader::parseOptions(const std::string& options) {
-        // Apply the trimming function to remove square brackets if they exist
-        std::string trimmedOptions = options;
-        trimSquareBrackets(trimmedOptions);
-
-        std::set<std::string> results;
-        std::stringstream ss(trimmedOptions);
-        std::string item;
-
-        while (std::getline(ss, item, ',')) {
-            // Further trimming whitespace if necessary
-            trim(item);
-            results.insert(item);
-        }
-
-        return results;
     }
 
     std::vector<std::string> FileReader::splitLine(const std::string& line) {
@@ -243,20 +224,6 @@ namespace filesystem {
         }
 
         return tokens;
-    }
-
-    void FileReader::trimSquareBrackets(std::string& str) {
-        if (!str.empty()) {
-            // Check and remove leading '[' if present
-            if (str.front() == '[') {
-                str.erase(str.begin());
-            }
-            // After removing the leading '[', check if the string is not empty
-            if (!str.empty() && str.back() == ']') {
-                // Check and remove trailing ']' if present
-                str.pop_back();
-            }
-        }
     }
 
     std::vector<std::string> FileReader::parseBracketOptions(const std::string& bracketedString) {

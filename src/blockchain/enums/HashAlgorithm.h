@@ -4,6 +4,9 @@
 #include <string>
 
 namespace blockchain::enums {
+    /**
+     * @brief Enum class for HashAlgorithm
+     */
     enum class HashAlgorithm {
         SHA256,
         SHA384,

@@ -35,6 +35,7 @@ namespace blockchain::enums {
     }
 
     std::string BlockAttributeUtils::toString(BlockAttribute attribute) {
+        // Convert the BlockAttribute to the corresponding string
         switch (attribute) {
             case BlockAttribute::TYPE:
                 return "Block Type";

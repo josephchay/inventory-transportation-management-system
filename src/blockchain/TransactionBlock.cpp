@@ -9,6 +9,8 @@ namespace blockchain {
     std::string TransactionInfo::toString() const {
         std::ostringstream oss;
         oss << "ID: " << transactionId
+            << " | Total Fees (RM): " << totalFees
+            << " | Commission Fees (RM) " << commissionFees
             << " | Retailer Per-Trip Credit Balance (RM): " << retailerPerTripCreditBalance
             << " | Annual Ordering Credit Balance (RM): " << annualOrderingCreditBalance
             << " | Payment Type: " << paymentType

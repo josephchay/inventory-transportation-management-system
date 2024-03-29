@@ -9,12 +9,22 @@
 namespace authentication {
     class Login {
     private:
-        std::map<std::string, std::string> credentials; // Store username and password pairs
+        std::map<std::string, std::string> credentials; /** Store username and password pairs */
 
     public:
+        /**
+         * @brief Construct a new Login object
+         */
         Login();
 
-        // Method to authenticate a user
+        /**
+         * @brief Method to authenticate a currentParticipant
+         *
+         * @param username
+         * @param password
+         * @param participant
+         * @return
+         */
         bool authenticate(const std::string& username, const std::string& password, const authentication::Participant participant);
     };
 } // namespace authentication

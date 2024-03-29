@@ -8,6 +8,13 @@
 #include <iostream>
 
 namespace blockchain {
+    /**
+     * @brief Convert a hexadecimal string to a byte array
+     * Helper method
+     *
+     * @param hex
+     * @return
+     */
     std::vector<uint8_t> hexStringToBytes(const std::string& hex) {
         std::vector<uint8_t> bytes;
 
@@ -20,13 +27,26 @@ namespace blockchain {
         return bytes;
     }
 
-    // Helper methods to append data to the block header vector for hashing
+    /**
+     * @brief Append data to the block header vector for hashing
+     * Helper method
+     *
+     * @param vec
+     * @param value
+     */
     void appendIntToVector(std::vector<uint8_t>& vec, uint32_t value) {
         for (int i = 0; i < 4; ++i) {
             vec.push_back((value >> (i * 8)) & 0xFF);
         }
     }
 
+    /**
+     * @brief Append hexadecimal data to the block header vector for hashing
+     * Helper method
+     *
+     * @param vec
+     * @param hex
+     */
     void appendHexToVector(std::vector<uint8_t>& vec, const std::string& hex) {
         // Ensure the hex string's length is even
         if (hex.length() % 2 != 0) {
@@ -44,7 +64,7 @@ namespace blockchain {
     std::function<std::string(std::string)> BlockHeader::getHashFunction(blockchain::enums::BlockType type) {
         switch (type) {
             case blockchain::enums::BlockType::SUPPLIER:
-            default:
+            default: // Default to SHA-256
                 return sha256;
             case blockchain::enums::BlockType::TRANSPORTER:
                 return sha384;
@@ -140,7 +160,7 @@ namespace blockchain {
         setMerkleRoot(getHashFunction(type)(informationString));
         setPrevHash(prevHash.empty() || prevHash == "0" ? std::string(64, '0') : prevHash);
         setHash(generateHash(getHashFunction(type)));
-        setMined(false); // Reset mined status after updating data, user has the choice to mine again
+        setMined(false); // Reset mined status after updating data, currentParticipant has the choice to mine again
         setPrevHash(prevHash.empty() || prevHash == "0" ? hash : prevHash);
 
         return *this;

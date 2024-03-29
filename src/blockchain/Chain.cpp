@@ -4,8 +4,21 @@
 #include <iostream>
 
 namespace blockchain {
+    /**
+     * @brief Construct a new Chain object.
+     *
+     * @param dataFilePath
+     * @param version
+     * @param bits
+     */
     Chain::Chain(const std::string dataFilePath, const int version, const std::string& bits) : dataFilePath(dataFilePath), version(version), bits(bits) {}
 
+    /**
+     * @brief Add a block to the blockchain.
+     *
+     * @param block
+     * @return
+     */
     Chain& Chain::addBlock(std::shared_ptr<Block> block) {
         // Set the genesis flag for the block
         block->setGenesis(block->getHeight() == 0);
@@ -14,6 +27,13 @@ namespace blockchain {
         return *this; // Enable chaining of operations
     }
 
+    /**
+     * @brief Virtually Edit a block in the blockchain.
+     *
+     * @param block
+     * @param info
+     * @return
+     */
     Chain& Chain::editBlock(std::shared_ptr<Block> block, const std::string& info) {
         auto clonedBlock = block->clone(); // Clone the block to avoid modifying the original
         clonedBlock->getHeader().updateEditableData(info);
@@ -28,6 +48,13 @@ namespace blockchain {
         return *this; // Enable chaining of operations
     }
 
+    /**
+     * @brief Edit a block in the blockchain with verifiable and persistent changes.
+     *
+     * @param block
+     * @param info
+     * @return
+     */
     Chain& Chain::hardEditBlock(std::shared_ptr<Block> block, const std::string& info) {
         // Find the index of the block that was edited
         auto it = std::find_if(blocks.begin(), blocks.end(),
@@ -61,6 +88,12 @@ namespace blockchain {
         return *this; // Enable chaining of operations
     }
 
+    /**
+     * @brief Temporarily hide a block from the blockchain.
+     *
+     * @param block
+     * @return
+     */
     Chain& Chain::hideBlock(std::shared_ptr<Block> block) {
         // The lambda captures block by value since it's a shared_ptr
         auto it = std::remove_if(blocks.begin(), blocks.end(),
@@ -73,6 +106,13 @@ namespace blockchain {
         return *this; // Enable chaining of operations
     }
 
+    /**
+     * @brief "Removes" a block from the blockchain by flagging it as invisible.
+     * The block still remains in the blockchain data record due to immutability but will not be displayed.
+     *
+     * @param block
+     * @return
+     */
     Chain& Chain::hardHideBlock(std::shared_ptr<Block> block) {
         // The lambda captures block by value since it's a shared_ptr
         auto it = std::find(blocks.begin(), blocks.end(), block);
@@ -89,6 +129,12 @@ namespace blockchain {
         return *this; // Enable chaining of operations
     }
 
+    /**
+     * @brief Mine a block in the blockchain.
+     *
+     * @param block
+     * @return
+     */
     Chain& Chain::mineBlock(std::shared_ptr<Block> block) {
         auto it = std::find(blocks.begin(), blocks.end(), block);
 
@@ -117,10 +163,18 @@ namespace blockchain {
         return *this; // Enable chaining of operations
     }
 
+    /**
+     * @brief Check if the blockchain is empty.
+     *
+     * @return
+     */
     bool Chain::isEmpty() const {
         return blocks.empty();
     }
 
+    /**
+     * @brief Display all blocks in the blockchain.
+     */
     void Chain::displayAll() const {
         if (hasVisibleBlocks(blocks)) {
             std::cout << std::endl << "------------------------------------ BLOCKCHAIN ------------------------------------" << std::endl << std::endl;
@@ -135,6 +189,11 @@ namespace blockchain {
         }
     }
 
+    /**
+     * @brief Display the details of the selected blocks.
+     *
+     * @param selectedBlocks
+     */
     void Chain::display(const std::vector<std::shared_ptr<Block>>& selectedBlocks) const {
         if (!selectedBlocks.empty() && hasVisibleBlocks(selectedBlocks)) {
             std::cout << "------------------------------------ SELECTED BLOCKS ------------------------------------" << std::endl << std::endl;
@@ -151,15 +210,29 @@ namespace blockchain {
         }
     }
 
+    /**
+     * @brief Check if the blocks vector has any visible blocks.
+     *
+     * @param blocks
+     * @return
+     */
     bool Chain::hasVisibleBlocks(const std::vector<std::shared_ptr<Block>>& blocks) const {
         return std::any_of(blocks.begin(), blocks.end(), [](const std::shared_ptr<Block>& block) {
             return block->isVisible();
         });
     }
 
+    /**
+     * @brief Search for a block by a specific attribute.
+     *
+     * @param attribute
+     * @param value
+     * @return
+     */
     std::vector<std::shared_ptr<Block>> Chain::searchBlockByAttr(blockchain::enums::BlockAttribute attribute, const std::string& value) const {
         std::vector<std::shared_ptr<Block>> foundBlocks; // Store shared pointers to the found blocks
 
+        // Iterate through the blocks and search for the specified attribute
         for (const auto& block : blocks) {
             bool found = false;
             std::string attrValue;
@@ -224,9 +297,15 @@ namespace blockchain {
             }
         }
 
+        // Return the found blocks
         return foundBlocks;
     }
 
+    /**
+     * @brief Display the details of a block according to the specified attribute.
+     *
+     * @param block
+     */
     void Chain::displayBlockDetails(const std::shared_ptr<Block> &block) const {
         std::cout << enums::BlockAttributeUtils::toString(enums::BlockAttribute::TYPE) << " --> " << enums::BlockTypeUtils ::toString(block->getType()) << std::endl
                   << enums::BlockAttributeUtils::toString(enums::BlockAttribute::HEIGHT) << " --> " << block->getHeight() << (block->isGenesis() ? " (Genesis Block)" : "") << std::endl
@@ -250,6 +329,12 @@ namespace blockchain {
         return static_cast<int>(blocks.size());
     }
 
+    /**
+     * @brief Get a block by its height in the chain.
+     *
+     * @param height
+     * @return
+     */
     std::shared_ptr<Block> Chain::getBlockByHeight(int height) {
         if (height >= 0 && height < blocks.size()) {
             return blocks[height];
@@ -296,6 +381,9 @@ namespace blockchain {
         writer.writeLine(""); // Add an empty line for readability
     }
 
+    /**
+     * @brief Add the blockchain to the record.
+     */
     void Chain::addToRecord() {
         if (!blocks.empty()) {
             const auto& block = blocks.back();

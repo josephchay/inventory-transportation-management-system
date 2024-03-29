@@ -2,12 +2,6 @@
 #include <stdexcept>
 
 namespace blockchain::enums {
-    /**
-     * @brief Convert string to BlockType
-     *
-     * @param typeString
-     * @return
-     */
     BlockType BlockTypeUtils::fromString(const std::string& typeString) {
         // Convert the string to the corresponding BlockType
         // (If else statements are used instead of switch-case because the enum class values are not continuous)
@@ -22,13 +16,8 @@ namespace blockchain::enums {
         }
     }
 
-    /**
-     * @brief Convert BlockType to string
-     *
-     * @param type
-     * @return
-     */
     std::string BlockTypeUtils::toString(BlockType type) {
+        // Convert the BlockType to the corresponding string
         switch (type) {
             case BlockType::SUPPLIER:
                 return "Supplier";

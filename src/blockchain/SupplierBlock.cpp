@@ -12,7 +12,8 @@ namespace blockchain {
         oss << "ID: " << supplierId
             << " | Name: " << supplierName
             << " | Location: " << supplierLocation
-            << " | Branch: " << supplierBranch;
+            << " | Branch: " << supplierBranch
+            << " | Items: " << items;
         return oss.str();
     }
 

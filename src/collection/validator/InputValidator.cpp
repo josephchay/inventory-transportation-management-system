@@ -1,11 +1,10 @@
 #include "InputValidator.h"
 #include <iostream>
-#include <limits>
 #include <set>
 
 namespace collection::validation {
     /**
-     * @brief Get a string input from the user and provides error handling for empty inputs.
+     * @brief Get a string input from the currentParticipant and provides error handling for empty inputs.
      *
      * @param topic
      * @return
@@ -49,15 +48,15 @@ namespace collection::validation {
     }
 
     /**
-     * @brief Validates user input to ensure it is a valid double value.
+     * @brief Validates currentParticipant input to ensure it is a valid double value.
      *
-     * This function prompts the user with a custom message and attempts to read
+     * This function prompts the currentParticipant with a custom message and attempts to read
      * a double value from the input. If the input is not a valid double, the function
-     * clears the error state of cin, discards the invalid input, and prompts the user again.
+     * clears the error state of cin, discards the invalid input, and prompts the currentParticipant again.
      * This process repeats until a valid double is entered.
      *
-     * @param topic The custom message displayed to the user prompting for input.
-     * @return A valid double value entered by the user.
+     * @param topic The custom message displayed to the currentParticipant prompting for input.
+     * @return A valid double value entered by the currentParticipant.
      */
     double InputValidator::validateDouble(const std::string& topic) {
         double value;
@@ -81,12 +80,12 @@ namespace collection::validation {
     /**
      * @brief Validates a date string against the format dd/mm/yyyy.
      *
-     * This function prompts the user with a custom message and reads an input string.
+     * This function prompts the currentParticipant with a custom message and reads an input string.
      * It then checks if the input matches the expected date format (dd/mm/yyyy) using
-     * a regular expression. If the input does not match, it prompts the user again.
+     * a regular expression. If the input does not match, it prompts the currentParticipant again.
      * This process repeats until a valid date format is entered.
      *
-     * @param topic The custom message displayed to the user prompting for input.
+     * @param topic The custom message displayed to the currentParticipant prompting for input.
      * @return A valid date string in the format dd/mm/yyyy.
      */
     std::string InputValidator::validateDateString(const std::string& topic) {
@@ -109,12 +108,12 @@ namespace collection::validation {
     /**
      * @brief Validates a time string against a 12-hour clock format with AM/PM.
      *
-     * This function prompts the user with a custom message and reads an input string.
+     * This function prompts the currentParticipant with a custom message and reads an input string.
      * It checks if the input matches the expected time format (hh:mm AM/PM, with flexible
      * spacing and case sensitivity) using a regular expression. If the input does not match,
-     * it prompts the user again. This process repeats until a valid time format is entered.
+     * it prompts the currentParticipant again. This process repeats until a valid time format is entered.
      *
-     * @param topic The custom message displayed to the user prompting for input.
+     * @param topic The custom message displayed to the currentParticipant prompting for input.
      * @return A valid time string in the format hh:mm AM/PM.
      */
     std::string InputValidator::validateTimeString(const std::string& topic) {
@@ -139,13 +138,13 @@ namespace collection::validation {
      * @brief Validates a numeric productOrderingLimit string to ensure it is properly formatted
      * with at most two decimal places.
      *
-     * This function prompts the user for a productOrderingLimit value, ensuring that the input
+     * This function prompts the currentParticipant for a productOrderingLimit value, ensuring that the input
      * matches a numeric format with at most two decimal places. It does not accept
      * productOrderingLimit symbols or any non-numeric characters except for the decimal point,
      * and ensures that if a decimal point is present, it is followed by no more than
      * two digits.
      *
-     * @param topic The message displayed to the user prompting for input.
+     * @param topic The message displayed to the currentParticipant prompting for input.
      * @return A string representing a valid numeric productOrderingLimit value.
      */
     std::string InputValidator::validateCurrencyInput(const std::string& topic) {
@@ -175,7 +174,7 @@ namespace collection::validation {
                 std::cout << (i + 1) << ". " << options[i] << std::endl;
             }
 
-            // Get user's choice
+            // Get currentParticipant's choice
             std::cout << "Select " << topic << ": ";
             std::getline(std::cin, input); // Use getline to read the input as a string
 
@@ -207,9 +206,9 @@ namespace collection::validation {
         // Use validateSelection to get the selected option
         std::string selectedOption = validateSelection(topic, options);
 
-        // Check if the user has decided to exit
+        // Check if the currentParticipant has decided to exit
         if (selectedOption.empty() || isExitCommand(selectedOption)) {
-            return -1; // or any other indicator that user exited or invalid selection was made
+            return -1; // or any other indicator that currentParticipant exited or invalid selection was made
         }
 
         // Find the index of the selected option
@@ -246,15 +245,15 @@ namespace collection::validation {
     }
 
     /**
-     * @brief Validates user input to ensure it is unique compared to a set of existing values.
+     * @brief Validates currentParticipant input to ensure it is unique compared to a set of existing values.
      *
-     * This function prompts the user with a custom message and attempts to read a string value from the input.
+     * This function prompts the currentParticipant with a custom message and attempts to read a string value from the input.
      * It then checks if the input is already present in a provided set of existing values. If the input is not unique,
-     * it prompts the user again. This process repeats until a unique input is entered.
+     * it prompts the currentParticipant again. This process repeats until a unique input is entered.
      *
-     * @param topic The custom message displayed to the user prompting for input.
+     * @param topic The custom message displayed to the currentParticipant prompting for input.
      * @param existingValues The set of existing values to compare against for uniqueness.
-     * @return A unique string value entered by the user.
+     * @return A unique string value entered by the currentParticipant.
      */
     std::string InputValidator::validateUniqueIdInt(const std::string& topic, const std::vector<int>& existingValues) {
         int value;
@@ -281,6 +280,13 @@ namespace collection::validation {
         }
     }
 
+    /**
+     * @brief Check if the input is an exit command.
+     * If the input is 'q' or 'quit', the program will exit.
+     *
+     * @param input
+     * @return
+     */
     bool InputValidator::isExitCommand(const std::string& input) {
         if (input == "q" || input == "quit") {
             std::exit(0); // Use exit(0) to terminate the program
@@ -288,6 +294,13 @@ namespace collection::validation {
         return false;
     }
 
+    /**
+     * @brief Check if the input is an empty input.
+     * If the input is empty, the currentParticipant will be prompted to enter a non-empty input.
+     *
+     * @param input
+     * @return
+     */
     bool InputValidator::isEmptyInput(const std::string& input) {
         if (input.empty()) {
             std::cout << "Input cannot be empty. Please try again.\n";

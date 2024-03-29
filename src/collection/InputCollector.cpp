@@ -8,6 +8,17 @@
 #include <string>
 
 namespace collection {
+    /**
+     * @brief Validate and edit a field in the options file
+     * Helper function to validate and edit a field in the options file
+     *
+     * @param fieldName
+     * @param currentValue
+     * @param optionsFilePath
+     * @param row
+     * @param column
+     * @return
+     */
     static std::string validateAndEditOptionsField(const std::string& fieldName, const std::string& currentValue, const std::string& optionsFilePath, int row, int column) {
         while (true) { // Loop indefinitely until a return statement is executed
             bool confirmed = validation::InputValidator::validateConfirmValue(fieldName, currentValue);
@@ -25,15 +36,15 @@ namespace collection {
         }
     }
 
-    std::pair<std::string, std::string> Prompt::collectLoginDetails() {
+    std::pair<std::string, std::string> InputCollector::collectLoginDetails() {
         std::string username = validation::InputValidator::validateString("username");
         std::string password = validation::InputValidator::validateString("password");
 
         return std::make_pair(username, password);
     }
 
-    blockchain::SupplierInfo Prompt::collectSupplierInfo(const std::string& optionsFilePath) {
-        std::string id, name, location, branch;
+    blockchain::SupplierInfo InputCollector::collectSupplierInfo(const std::string& optionsFilePath) {
+        std::string id, name, location, branch, items;
 
         filesystem::FileReader reader(optionsFilePath, filesystem::DataType::OPTION);
 
@@ -41,16 +52,18 @@ namespace collection {
         id = validation::InputValidator::validateSelection("supplier ID", allIds);
         int row = utils::Structures::findVectorIndex(allIds, id);
 
+        // Fetch all supplier data for the selected ID
         auto selectedData = reader.getDataById(id);
 
         name = validateAndEditOptionsField("supplier name", selectedData[2], optionsFilePath, row, 2);
         location = validateAndEditOptionsField("supplier location", selectedData[3], optionsFilePath, row, 3);
         branch = validateAndEditOptionsField("supplier branch", selectedData[4], optionsFilePath, row, 4);
+        items = validation::InputValidator::validateString("supplier items");
 
-        return blockchain::SupplierInfo(std::stoi(id), name, location, branch);
+        return blockchain::SupplierInfo(std::stoi(id), name, location, branch, items);
     }
 
-    blockchain::TransporterInfo Prompt::collectTransporterInfo(const std::string& optionsFilePath) {
+    blockchain::TransporterInfo InputCollector::collectTransporterInfo(const std::string& optionsFilePath) {
         std::string id, name, productType, transportationType, orderingType;
 
         filesystem::FileReader reader(optionsFilePath, filesystem::DataType::OPTION);
@@ -60,6 +73,7 @@ namespace collection {
         id = validation::InputValidator::validateSelection("transporter ID", allIds);
         int row = utils::Structures::findVectorIndex(allIds, id);
 
+        // Fetch all transporter data for the selected ID
         auto selectedData = reader.getDataById(id);
 
         name = validateAndEditOptionsField("supplier name", selectedData[2], optionsFilePath, row, 2);
@@ -78,9 +92,9 @@ namespace collection {
         return blockchain::TransporterInfo(std::stoi(id), name, productType, transportationType, orderingType, orderingAmount);
     }
 
-    blockchain::TransactionInfo Prompt::collectTransactionInfo(const std::string& optionsFilePath, const std::string& recordsFilePath) {
+    blockchain::TransactionInfo InputCollector::collectTransactionInfo(const std::string& optionsFilePath, const std::string& recordsFilePath) {
         int id, productOrderingLimit;
-        std::string retailerPerTripCreditBalance, annualOrderingCreditBalance, paymentType;
+        std::string totalFees, commisionFees, retailerPerTripCreditBalance, annualOrderingCreditBalance, paymentType;
 
         filesystem::FileReader reader(optionsFilePath, filesystem::DataType::OPTION);
 
@@ -89,10 +103,13 @@ namespace collection {
         std::vector<int> transactionIds = filesystem::FileReader::extractBlockIds(recordsFilePath, "Transaction");
 
         id = std::stoi(collection::validation::InputValidator::validateUniqueIdInt("transaction ID (unique)", transactionIds));
+        totalFees = collection::validation::InputValidator::validateString("transaction fees (RM)");
+        commisionFees = collection::validation::InputValidator::validateString("commission fees (RM)");
         retailerPerTripCreditBalance = collection::validation::InputValidator::validateString("retailer per trip credit balance (RM)");
         annualOrderingCreditBalance = collection::validation::InputValidator::validateString("annual ordering credit balance (RM)");
         paymentType = validation::InputValidator::validateSelection("payment type", allPaymentTypes);
 
+        // Fetch all payment types for selection
         auto selectedData = reader.getDataById(paymentType);
 
         auto productOrderingLimitOptions = filesystem::FileReader::parseBracketOptions(selectedData[2]);
@@ -101,30 +118,31 @@ namespace collection {
         productOrderingLimit = collection::validation::InputValidator::validateInt("product ordering limit (" + productOrderingLimitType + ")");
         std::string productOrderingLimitStr = "(" + productOrderingLimitType + ") " + std::to_string(productOrderingLimit);
 
-        return blockchain::TransactionInfo(id, retailerPerTripCreditBalance, annualOrderingCreditBalance, paymentType, productOrderingLimitStr);
+        return blockchain::TransactionInfo(id, totalFees, commisionFees, retailerPerTripCreditBalance, annualOrderingCreditBalance, paymentType, productOrderingLimitStr);
     }
 
-    std::pair<blockchain::enums::BlockAttribute, std::string> Prompt::collectSearchCriteria(const std::vector<std::string>& searchOptions, const std::string& topic) {
+    std::pair<blockchain::enums::BlockAttribute, std::string> InputCollector::collectSearchCriteria(const std::vector<std::string>& searchOptions, const std::string& topic) {
         int searchByAttr = collection::validation::InputValidator::validateSelectionInt("an attribute to " + topic + " by", searchOptions);
         std::string searchValue = collection::validation::InputValidator::validateString("a value to " + topic + " for");
 
         return std::make_pair(static_cast<blockchain::enums::BlockAttribute>(searchByAttr - 1), searchValue);
     }
 
-    void Prompt::collectBlockManipulationCriteria(blockchain::Chain& blockchain, blockchain::Chain& redactedBlockchain, const std::vector<std::string>& searchOptions) {
+    void InputCollector::collectBlockManipulationCriteria(blockchain::Chain& blockchain, blockchain::Chain& redactedBlockchain, const std::vector<std::string>& searchOptions) {
         using namespace blockchain::enums;
 
         std::vector<std::string> types = { "Edit", "Delete", "Mine Edited Blocks" };
         int type = validation::InputValidator::validateSelectionInt("Manipulation Type", types);
 
         if (type == 1) {
+            // Edit block
             std::vector<std::string> editTypes = { "Soft Edit", "Hard Edit" };
 
             int editType = validation::InputValidator::validateSelectionInt("Edit Type", editTypes);
 
             std::vector<std::shared_ptr<blockchain::Block>> foundBlocks;
             do {
-                auto [searchAttr, searchValue] = collection::Prompt::collectSearchCriteria(searchOptions, (editType == 1 ? "soft edit" : "hard edit"));
+                auto [searchAttr, searchValue] = collection::InputCollector::collectSearchCriteria(searchOptions, (editType == 1 ? "soft edit" : "hard edit"));
                 foundBlocks = (editType == 1 ? redactedBlockchain.searchBlockByAttr(searchAttr, searchValue) : blockchain.searchBlockByAttr(searchAttr, searchValue));
 
                 if (foundBlocks.size() > 1) {
@@ -137,17 +155,17 @@ namespace collection {
             switch (foundBlocks[0]->getType()) {
                 case blockchain::enums::BlockType::SUPPLIER:
                     infoPtr = std::make_shared<blockchain::SupplierInfo>(
-                            collection::Prompt::collectSupplierInfo(data::Config::OPTIONS_SUPPLIER_FILE_PATH));
+                            collection::InputCollector::collectSupplierInfo(data::Config::OPTIONS_SUPPLIER_FILE_PATH));
                     break;
 
                 case blockchain::enums::BlockType::TRANSPORTER:
                     infoPtr = std::make_shared<blockchain::TransporterInfo>(
-                            collection::Prompt::collectTransporterInfo(data::Config::OPTIONS_TRANSPORTER_FILE_PATH));
+                            collection::InputCollector::collectTransporterInfo(data::Config::OPTIONS_TRANSPORTER_FILE_PATH));
                     break;
 
                 case blockchain::enums::BlockType::TRANSACTION:
                     infoPtr = std::make_shared<blockchain::TransactionInfo>(
-                            collection::Prompt::collectTransactionInfo(data::Config::OPTIONS_TRANSACTION_FILE_PATH, data::Config::RECORDS_BLOCKCHAIN_FILE_PATH));
+                            collection::InputCollector::collectTransactionInfo(data::Config::OPTIONS_TRANSACTION_FILE_PATH, data::Config::RECORDS_BLOCKCHAIN_FILE_PATH));
                     break;
 
                 default:
@@ -167,12 +185,13 @@ namespace collection {
 
             std::cout << "Block edited successfully." << std::endl << std::endl;
         } else if (type == 2) {
+            // Delete block
             std::vector<std::string> delTypes = { "Soft Delete", "Hard Delete" };
             int delType = validation::InputValidator::validateSelectionInt("Delete Type", delTypes);
 
             std::vector<std::shared_ptr<blockchain::Block>> foundBlocks;
             do {
-                auto [searchAttr, searchValue] = collection::Prompt::collectSearchCriteria(searchOptions, (delType == 1 ? "soft delete" : "hard delete"));
+                auto [searchAttr, searchValue] = collection::InputCollector::collectSearchCriteria(searchOptions, (delType == 1 ? "soft delete" : "hard delete"));
                 foundBlocks = (delType == 1 ? redactedBlockchain.searchBlockByAttr(searchAttr, searchValue) : blockchain.searchBlockByAttr(searchAttr, searchValue));
 
                 if (foundBlocks.size() > 1) {
@@ -193,9 +212,10 @@ namespace collection {
 
             std::cout << "Block deleted successfully." << std::endl << std::endl;
         } else {
+            // Mine edited blocks
             std::vector<std::shared_ptr<blockchain::Block>> foundBlocks;
             do {
-                auto [searchAttr, searchValue] = collection::Prompt::collectSearchCriteria(searchOptions, "mine");
+                auto [searchAttr, searchValue] = collection::InputCollector::collectSearchCriteria(searchOptions, "mine");
                 foundBlocks = blockchain.searchBlockByAttr(searchAttr, searchValue);
 
                 if (foundBlocks.size() > 1) {

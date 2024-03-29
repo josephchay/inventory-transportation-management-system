@@ -32,8 +32,6 @@ add_executable(inventory_transportation_management_system src/main.cpp
         src/utils/Datetime.cpp
         src/blockchain/enums/BlockType.cpp
         src/blockchain/enums/BlockType.h
-        src/utils/Math.h
-        src/utils/Math.cpp
         libs/sha384/sha384.h
         libs/sha384/sha384.cpp
         src/blockchain/enums/HashAlgorithm.h
@@ -46,4 +44,6 @@ add_executable(inventory_transportation_management_system src/main.cpp
         src/authentication/Participant.cpp
         src/authentication/Participant.h
         src/authentication/Login.cpp
-        src/authentication/Login.h)
+        src/authentication/Login.h
+        src/Application.cpp
+        src/Application.h)

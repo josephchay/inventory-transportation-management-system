@@ -4,6 +4,9 @@
 #include <string>
 
 namespace blockchain::enums {
+    /**
+     * @brief Enum class for BlockAttribute
+     */
     enum class BlockAttribute {
         TYPE,
         HEIGHT,
@@ -21,7 +24,20 @@ namespace blockchain::enums {
 
     class BlockAttributeUtils {
     public:
+        /**
+         * Convert a string to a BlockAttribute
+         *
+         * @param typeString
+         * @return
+         */
         static BlockAttribute fromString(const std::string& typeString);
+
+        /**
+         * Convert a BlockAttribute to a string
+         *
+         * @param type
+         * @return
+         */
         static std::string toString(BlockAttribute type);
     };
 } // namespace blockchain

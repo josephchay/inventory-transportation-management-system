@@ -6,23 +6,35 @@
 namespace authentication {
     class Participant {
     private:
-        int id;
-        std::string username;
-        std::string password;
-        std::string fullName;
-        std::string department;
+        int id; /* Unique identifier for the participant */
+        std::string username; /* Username for the participant */
+        std::string password; /* Password for the participant */
+        std::string fullName; /* First Name plus Last Name of the participant */
+        std::string industryRole; /* Industry of the participant: Supplier, Transporter, Accountancy, or Administration */
         std::string role;
 
     public:
-        Participant(int id, const std::string& username, const std::string& password, const std::string& fullName, const std::string& department, const std::string& role);
+        /**
+         * @brief Construct a new Participant object
+         *
+         * @param id
+         * @param username
+         * @param password
+         * @param fullName
+         * @param industryRole
+         * @param role
+         */
+        Participant(int id, const std::string& username, const std::string& password, const std::string& fullName, const std::string& industryRole, const std::string& role);
 
-        // Accessors
-        int getId() const;
-        std::string getUsername() const;
-        std::string getPassword() const;
-        std::string getFullName() const;
-        std::string getIndustryRole() const;
-        std::string getRole() const;
+        // Getters
+        [[nodiscard]] int getId() const;
+        [[nodiscard]] std::string getUsername() const;
+        [[nodiscard]] std::string getPassword() const;
+        [[nodiscard]] std::string getFullName() const;
+        [[nodiscard]] std::string getIndustryRole() const;
+        [[nodiscard]] std::string getRole() const;
+        [[nodiscard]] double getBalance() const;
+        [[nodiscard]] double getTotalSpent() const;
     };
 }
 
